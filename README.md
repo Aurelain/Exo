@@ -12,7 +12,7 @@ There are several advantages to using JS, rather than AhkScript:
   1. A lot of people are already familiar with JS, so there's no need to learn the peculiarities of the AhkScript-syntax.
   2. Gain access to a huge repository of libraries written in JS.
   3. You can use JS-specific constructs (eval, anonymous functions, prototype, etc.).
-  4. You get to code in your favourite JS editor (IDE).
+  4. You get to code in your favorite JS editor (IDE).
 ... and more.
 
 It does all this by embedding a browser (Internet Explorer) and hooking into it with ComObject. It then bridges the JS global functions to their AHK counterpart.
@@ -21,9 +21,14 @@ It does all this by embedding a browser (Internet Explorer) and hooking into it 
 While migrating the keywords, the following goals were set:
 - try to port 100% of the functionality (88% achieved)
 - try as much as possible to conform with the AHK documentation
-- provide usefull typing (i.e. we shouldn't return String types everywhere only because it's easy)
+- provide useful typing (i.e. we shouldn't return String types everywhere only because it's easy)
 
-## Sample code
+## Usage
+Launch *Exo* with a ".js" file argument (either through drag-and-drop, or from the command-line).
+```
+> Exo.ahk "demo.js"
+```
+Sample code:
 ```JavaScript
 alert(A_Now);
 FileAppend('Hello, World!', 'hello.txt')
@@ -516,7 +521,7 @@ AHK Keyword | JS Implementation | JS Type
 **[#Warn](http://ahkscript.org/docs/commands/_Warn.htm)**|**Not needed (AHK specific)**|**N/A**
 **[#WinActivateForce](http://ahkscript.org/docs/commands/_WinActivateForce.htm)**|**Cannot use directives**|**N/A**
 
-##TODO
+## TODO
 - Test every keyword
 - Accept/Provide URI paths in all transactions (not DOS-style paths)
 - Allow "Include" to use online URL
@@ -524,3 +529,9 @@ AHK Keyword | JS Implementation | JS Type
 - Implement all built-in labels (GuiSize, GuiClose, etc)
 - Find a workaround for the JS "onload" event
 - Maybe implement a console (Firebug lite has some issues)
+
+
+## About
+- Author: Aurelain (aurelain@gmail.com)
+- License: [WTFPL](http://www.wtfpl.net/)
+- Tested on AutoHotkey v1.1.15.04
