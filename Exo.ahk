@@ -1,5 +1,6 @@
 ﻿#NoEnv
-;#SingleInstance, Force
+#MaxMem 4095
+#SingleInstance Off
 
 #Include %A_ScriptDir%\lib\API.ahk
 #Include %A_ScriptDir%\lib\ComDispatch.ahk
@@ -15,6 +16,7 @@ hotkeysMap := {}
 mapOnMessageClosures := {}
 threadDefaults := {}
 errLevel := 0
+closureGuiClose := ""
 closureOnClipboardChange := ""
 closureOnExit := ""
 
@@ -81,15 +83,14 @@ fixIE(false)
 
 
 ; Uncomment this to see the Browser
-;Gui, Show
+Gui, Show
 
 
 return
 
 
+
 /*
-GuiClose:
-ExitApp
 ESC::
 ExitApp
 */
@@ -250,6 +251,16 @@ end(message){
 ;#########################################################
 ;##################   L A B E L S   ######################
 ;#########################################################
+
+
+/**
+ * Built-in label.
+ */
+GuiClose:
+	global closureGuiClose
+	trigger(closureGuiClose)
+	ExitApp
+return
 
 
 /**

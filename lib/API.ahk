@@ -508,6 +508,15 @@ _Gui(Subcommand,Param2="",Param3="",Param4=""){
 	Gui %Subcommand%,%Param2%,%Param3%,%Param4%
 }
 
+/**
+ * Implementation: Special.
+ * "GuiClose" is special because it's a built-in label.
+ * In JS, it becomes a function that registers a closure.
+ */
+_GuiClose(Closure=""){
+	global closureGuiClose := Closure
+}
+
 
 /**
  * Implementation: Normalization.
