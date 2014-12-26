@@ -296,6 +296,7 @@ AHK Keyword | JS Implementation | JS Type
 [GroupClose](http://ahkscript.org/docs/commands/GroupClose.htm)|Normalization|Undefined
 [GroupDeactivate](http://ahkscript.org/docs/commands/GroupDeactivate.htm)|Normalization|Undefined
 [Gui](http://ahkscript.org/docs/commands/Gui.htm)|Normalization|Undefined
+[GuiClose](http://ahkscript.org/docs/commands/Gui.htm#GuiClose)|GuiClose(Closure)|Undefined
 [GuiControl](http://ahkscript.org/docs/commands/GuiControl.htm)|Normalization|Undefined
 [GuiControlGet](http://ahkscript.org/docs/commands/GuiControlGet.htm)|Normalization|String
 [Hotkey](http://ahkscript.org/docs/commands/Hotkey.htm)|Hotkey(KeyName [, Closure, Options])|Undefined
@@ -527,8 +528,10 @@ AHK Keyword | JS Implementation | JS Type
 - Allow "Include" to use online URL
 - Implement "IncludeAgain"
 - Implement all built-in labels (GuiSize, GuiClose, etc)
+- Implement "DateAdd" and "DateDiff"
 - Find a workaround for the JS "onload" event
 - Maybe implement a console (Firebug lite has some issues)
+- Clarify how to handle the Directives
 
 
 ## About
