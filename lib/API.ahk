@@ -2,10 +2,21 @@
 ;############################   A P I   #################################
 ;########################################################################
 ; This section migrates AHK Commands, Functions and Variables that need special attention.
-; Keywords not present here are migrated directly (dynamicaly) in "bridge()".
+; Keywords not present here are migrated directly (dynamically).
 ; The bulk of API functions consists of dumb Command->Function conversions.
 ; Whenever an API function deviates more than trivially from the AHK documentations,
 ; extensive comments are provided.
+
+
+/**
+ * Implementation: Replacement.
+ * Because the command-line parameters syntax (1, 2, 3, etc.) is nonsensical in JS,
+ * an alternative has been provided through the "A_Args" variable
+ * (inspired by AHK v2: http://lexikos.github.io/v2/docs/Variables.htm#CommandLine ).
+ */
+_A_Args(){
+    return JS.Array(getArgs()*) ; variadic call
+}
 
 
 /**
@@ -27,13 +38,13 @@ _Click(Item1="",Item2="",Item3="",Item4="",Item5="",Item6="",Item7=""){
 /**
  * Implementation: Identical.
  * "Clipboard" and "ErrorLevel" are the only built-in variables that allow write access.
- * Because "bridge()" only handles reading variables, these 2 had to be customized.
+ * Because "getBuiltInVar()" only handles getters, these 2 had to be customized.
  */
-_Clipboard(Value="__Undefined"){ ; an alternative would have been using variadic parameters, but that fails the MaxParams test
-	if (Value == "__Undefined") {
-		inject(Clipboard)
-	} else {
-		Clipboard := Value
+_Clipboard(a*){ ; variadic parameters, to detect the role (getter or setter)
+	if (a.MaxIndex()) { ; setter
+		Clipboard := a[1]
+	} else { ; getter
+		return Clipboard
 	}
 }
 
@@ -71,13 +82,13 @@ _ControlFocus(Control="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object)
  * "ControlGetPos" is special because it outputs 4 variables.
- * The migrated function returns instead an Object with 4 properties: X, Y, Width and Height.
+ * In JS, we return an Object with 4 properties: X, Y, Width and Height.
  */
 _ControlGetPos(Control="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	ControlGetPos X,Y,Width,Height,%Control%,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	return {X:X, Y:Y, Width:Width, Height:Height}
+	return JS.Object("X", X, "Y", Y, "Width", Width, "Height", Height)
 }
 
 
@@ -86,7 +97,7 @@ _ControlGetPos(Control="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText="")
  */
 _ControlGet(Cmd,Value="",Control="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	ControlGet OutputVar,%Cmd%,%Value%,%Control%,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -95,7 +106,7 @@ _ControlGet(Cmd,Value="",Control="",WinTitle="",WinText="",ExcludeTitle="",Exclu
  */
 _ControlGetFocus(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	ControlGetFocus OutputVar,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -104,7 +115,7 @@ _ControlGetFocus(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
  */
 _ControlGetText(Control="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	ControlGetText OutputVar,%Control%,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -144,8 +155,6 @@ _ControlSetText(Control="",NewText="",WinTitle="",WinText="",ExcludeTitle="",Exc
  * Implementation: Normalization.
  */
 _CoordMode(Target,Mode=""){
-	global threadDefaults
-	threadDefaults["CoordMode"] := [Target,Mode]
 	CoordMode %Target%,%Mode%
 }
 
@@ -154,8 +163,6 @@ _CoordMode(Target,Mode=""){
  * Implementation: Normalization.
  */
 _Critical(Value=""){
-	global threadDefaults
-	threadDefaults["Critical"] := [Value]
 	Critical %Value%
 }
 
@@ -164,8 +171,6 @@ _Critical(Value=""){
  * Implementation: Normalization.
  */
 _DetectHiddenText(OnOff){
-	global threadDefaults
-	threadDefaults["DetectHiddenText"] := [OnOff]
 	DetectHiddenText %OnOff%
 }
 
@@ -174,8 +179,6 @@ _DetectHiddenText(OnOff){
  * Implementation: Normalization.
  */
 _DetectHiddenWindows(OnOff){
-	global threadDefaults
-	threadDefaults["DetectHiddenWindows"] := [OnOff]
 	DetectHiddenWindows %OnOff%
 }
 
@@ -193,7 +196,7 @@ _Drive(Subcommand,Drive="",Value=""){
  */
 _DriveGet(Cmd,Value=""){
 	DriveGet OutputVar,%Cmd%,%Value%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -202,7 +205,7 @@ _DriveGet(Cmd,Value=""){
  */
 _DriveSpaceFree(Path){
 	DriveSpaceFree OutputVar,%Path%
-	inject(OutputVar)
+	return OutputVar+0
 }
 
 
@@ -211,7 +214,7 @@ _DriveSpaceFree(Path){
  */
 _EnvGet(EnvVarName){
 	EnvGet OutputVar,%EnvVarName%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -219,7 +222,7 @@ _EnvGet(EnvVarName){
  * Implementation: Normalization.
  */
 _EnvSet(EnvVar,Value){
-	EnvSet %EnvVar%,%Value%
+	return OutputVar
 }
 
 
@@ -227,21 +230,20 @@ _EnvSet(EnvVar,Value){
  * Implementation: Normalization.
  */
 _EnvUpdate(){
-	EnvUpdate 
+	EnvUpdate
 }
 
 
 /**
  * Implementation: Identical.
  * "Clipboard" and "ErrorLevel" are the only built-in variables that allow write access.
- * Because "bridge()" only handles reading variables, these 2 had to be customized.
+ * Because "getBuiltInVar()" only handles getters, these 2 had to be customized.
  */
-_ErrorLevel(Value="__Undefined"){ ; an alternative would have been using variadic parameters, but that fails the MaxParams test
-	global errLevel
-	if (Value == "__Undefined") {
-		inject(errLevel, "Number")
-	} else {
-		errLevel := Value
+_ErrorLevel(a*){ ; variadic parameters, to detect the role (getter or setter)
+	if (a.MaxIndex()) { ; setter
+		ErrorLevel := a[1]
+	} else { ; getter
+		return ErrorLevel
 	}
 }
 
@@ -315,18 +317,18 @@ _FileEncoding(Encoding=""){
  */
 _FileGetAttrib(Filename=""){
 	FileGetAttrib OutputVar,%Filename%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object)
  * "FileGetShortcut" is special because it outputs 7 variables.
- * The migrated function returns instead an Object with 7 properties: Target, Dir, Args, Description, Icon, IconNum, RunState.
+ * In JS, we return an Object with 7 properties: Target, Dir, Args, Description, Icon, IconNum, RunState.
  */
 _FileGetShortcut(LinkFile, Target="", Dir="", Args="", Description="", Icon="", IconNum="", RunState=""){
 	FileGetShortcut, %LinkFile%, %Target%, %Dir%, %Args%, %Description%, %Icon%, %IconNum%, %RunState%
-	return {Target:Target, Dir:Dir, Args:Args, Description:Description, Icon:Icon, IconNum:IconNum, RunState:RunState}
+	return JS.Object("Target",Target, "Dir",Dir, "Args",Args, "Description",Description, "Icon",Icon, "IconNum",IconNum, "RunState",RunState)
 }
 
 
@@ -335,7 +337,7 @@ _FileGetShortcut(LinkFile, Target="", Dir="", Args="", Description="", Icon="", 
  */
 _FileGetSize(Filename="",Units=""){
 	FileGetSize OutputVar,%Filename%,%Units%
-	inject(OutputVar)
+	return OutputVar+0
 }
 
 
@@ -344,7 +346,7 @@ _FileGetSize(Filename="",Units=""){
  */
 _FileGetTime(Filename="",WhichTime=""){
 	FileGetTime OutputVar,%Filename%,%WhichTime%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -353,7 +355,7 @@ _FileGetTime(Filename="",WhichTime=""){
  */
 _FileGetVersion(Filename=""){
 	FileGetVersion OutputVar,%Filename%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -378,7 +380,7 @@ _FileMoveDir(Source,Dest,Flag=""){
  */
 _FileRead(Filename){
 	FileRead OutputVar,%Filename%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -387,7 +389,7 @@ _FileRead(Filename){
  */
 _FileReadLine(Filename,LineNum){
 	FileReadLine OutputVar,%Filename%,%LineNum%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -420,7 +422,7 @@ _FileRemoveDir(DirName,Recurse=""){
  */
 _FileSelectFile(Options="",RootDirOFilename="",Prompt="",Filter=""){
 	FileSelectFile OutputVar,%Options%,%RootDirOFilename%,%Prompt%,%Filter%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -429,7 +431,7 @@ _FileSelectFile(Options="",RootDirOFilename="",Prompt="",Filter=""){
  */
 _FileSelectFolder(StartingFolder="",Options="",Prompt=""){
 	FileSelectFolder OutputVar,%StartingFolder%,%Options%,%Prompt%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -454,18 +456,7 @@ _FileSetTime(YYYYMMDDHH24MISS="",FilePattern="",WhichTime="",OperateOnFolders=""
  */
 _FormatTime(YYYYMMDDHH24MISS="",Format=""){
 	FormatTime OutputVar,%YYYYMMDDHH24MISS%,%Format%
-	inject(OutputVar)
-}
-
-
-/**
- * Implementation: Normalization.
- * Since this keyword is shared by both a built-in Command and a built-in Function,
- * the migration occludes the Command and uses the Function.
- */
-_GetKeyState(KeyName,Mode=""){
-	result := GetKeyState(KeyName, Mode)
-	inject(result)
+	return OutputVar
 }
 
 
@@ -508,15 +499,6 @@ _Gui(Subcommand,Param2="",Param3="",Param4=""){
 	Gui %Subcommand%,%Param2%,%Param3%,%Param4%
 }
 
-/**
- * Implementation: Special.
- * "GuiClose" is special because it's a built-in label.
- * In JS, it becomes a function that registers a closure.
- */
-_GuiClose(Closure=""){
-	global closureGuiClose := Closure
-}
-
 
 /**
  * Implementation: Normalization.
@@ -531,12 +513,12 @@ _GuiControl(Subcommand,ControlID,Param3=""){
  */
 _GuiControlGet(Subcommand="",ControlID="",Param4=""){
 	GuiControlGet OutputVar,%Subcommand%,%ControlID%,%Param4%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (target label becomes closure).
  * "Hotkey" is special because it uses labels.
  * The migrated function uses closures instead of labels.
  * TODO: Add support for AltTab.
@@ -545,7 +527,6 @@ _Hotkey(KeyName, Closure="", Options=""){
 	if (KeyName == "") {
 		end("Invalid KeyName!")
 	}
-	global hotkeysMap ; our storage
 	StringLower, Closure, Closure	; uniformity, to allow case insesitivity
 	operation := ""
 	if (Closure == "on" || RegExMatch(Options, "i)\bOn\b")) {
@@ -556,14 +537,14 @@ _Hotkey(KeyName, Closure="", Options=""){
 		operation := "toggle"
 	}
 	if (operation) {
-		if (!hotkeysMap.HasKey(KeyName)) {
+		if (!closures.HasKey("Hotkey" . KeyName)) {
 			end("Nonexistent hotkey!")
 		} else {
 			Hotkey %KeyName%, %operation%, %Options%
 		}
 	} else {
 		if (Closure!="") {
-			hotkeysMap[KeyName] := Closure
+			closures["Hotkey" . KeyName] := Closure
 			Hotkey %KeyName%, LabelHotkey, %Options%
 		} else {
 			Hotkey %KeyName%,, %Options%
@@ -573,13 +554,13 @@ _Hotkey(KeyName, Closure="", Options=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "ImageSearch" is special because it outputs 2 variables.
- * The migrated function returns instead an Object with 2 properties: X, Y.
+ * In JS, we return an Object with 2 properties: X, Y.
  */
 _ImageSearch(X1,Y1,X2,Y2,ImageFile){
 	ImageSearch X,Y,%X1%,%Y1%,%X2%,%Y2%,%ImageFile%
-	return {X:X, Y:Y}
+	return JS.Object("X",X, "Y",Y)
 }
 
 
@@ -596,7 +577,7 @@ _IniDelete(Filename,Section,Key=""){
  */
 _IniRead(Filename,Section="",Key="",Default=""){
 	IniRead OutputVar,%Filename%,%Section%,%Key%,%Default%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -613,7 +594,7 @@ _IniWrite(Value,Filename,Section,Key=""){
  */
 _Input(Options="",EndKeys="",MatchList=""){
 	Input OutputVar,%Options%,%EndKeys%,%MatchList%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -622,7 +603,7 @@ _Input(Options="",EndKeys="",MatchList=""){
  */
 _InputBox(Title="",Prompt="",HIDE="",Width="",Height="",X="",Y="",FontBlank="",Timeout="",Default=""){
 	InputBox OutputVar,%Title%,%Prompt%,%HIDE%,%Width%,%Height%,%X%,%Y%,,%Timeout%,%Default%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -651,7 +632,7 @@ _ListHotkeys(){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * Because an AHK Loop intermingled with JS would be nonsensical, the migration solution was to
  * output the whole Loop results as an Array of Objects. Here's how the 5 types of Loop migrated:
  * 		1) [Normal-Loop](http://ahkscript.org/docs/commands/Loop.htm): N/A (not needed)
@@ -670,54 +651,50 @@ _ListHotkeys(){
  *			Name,Type,Key,SubKey,TimeModified
  */
 _Loop(Param1,Param2="",Param3="",Param4=""){
-	output := []
+	output := JS.Array()
 	if (RegExMatch(Param1, "i)^parse$")) {
 		end("The Parse-Loop has been superseded by StrSplit().")
 	} else if (RegExMatch(Param1, "i)^read$")) {
 		Loop, %Param1%, %Param2%
 		{
-			output[A_Index] := A_LoopReadLine
+            output.push(A_LoopReadLine)
 		}
 	} else {
 		global regNames
 		if (regNames.HasKey(Param1)) {
 			Loop, %Param1%, %Param2%, %Param3%, %Param4%
 			{
-				obj := {}
-				obj["Name"] := A_LoopRegName
-				obj["Type"] := A_LoopRegType
-				obj["Key"] := A_LoopRegKey
-				obj["SubKey"] := A_LoopRegSubKey
-				obj["TimeModified"] := A_LoopRegTimeModified
-				output[A_Index] := obj
+                output.push(JS.Object("Name", A_LoopRegName
+                    ,"Type", A_LoopRegType
+                    ,"Key", A_LoopRegKey
+                    ,"SubKey", A_LoopRegSubKey
+                    ,"TimeModified", A_LoopRegTimeModified))
 			}
 		} else {
 			Loop, %Param1%, %Param2%, %Param3%
-			{
-				obj := {}
-				obj["Name"] := A_LoopFileName
-				obj["Ext"] := A_LoopFileExt
-				obj["FullPath"] := A_LoopFileFullPath
-				obj["LongPath"] := A_LoopFileLongPath
-				obj["ShortPath"] := A_LoopFileShortPath
-				obj["Dir"] := A_LoopFileDir
-				obj["TimeModified"] := A_LoopFileTimeModified
-				obj["TimeCreated"] := A_LoopFileTimeCreated
-				obj["TimeAccessed"] := A_LoopFileTimeAccessed
-				obj["Attrib"] := A_LoopFileAttrib
-				obj["Size"] := A_LoopFileSize
-				obj["SizeKB"] := A_LoopFileSizeKB
-				obj["SizeMB"] := A_LoopFileSizeMB
-				output[A_Index] := obj
-			}
+            {
+                output.push(JS.Object("Name", A_LoopFileName
+                    ,"Ext", A_LoopFileExt
+                    ,"FullPath", A_LoopFileFullPath
+                    ,"LongPath", A_LoopFileLongPath
+                    ,"ShortPath", A_LoopFileShortPath
+                    ,"Dir", A_LoopFileDir
+                    ,"TimeModified", A_LoopFileTimeModified
+                    ,"TimeCreated", A_LoopFileTimeCreated
+                    ,"TimeAccessed", A_LoopFileTimeAccessed
+                    ,"Attrib", A_LoopFileAttrib
+                    ,"Size", A_LoopFileSize+0
+                    ,"SizeKB", A_LoopFileSizeKB+0
+                    ,"SizeMB", A_LoopFileSizeMB+0))
+            }
 		}
 	}
-	inject(output)
+	return output
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * "LV_GetText" is special because it outputs 2 variables (a return value and a ByRef).
  * The migrated function has two modes:
  * 		1) the default mode (Advanced=0) is to return the retrieved text. Note that this behavior differs from the one in AHK.
@@ -725,11 +702,11 @@ _Loop(Param1,Param2="",Param3="",Param4=""){
  */
 _LV_GetText(RowNumber,ColumnNumber=1,Advanced=0){
 	if (Advanced) {
-		LV_GetText(OutputVar, RowNumber, ColumnNumber)
-		inject(OutputVar)
+		Success := LV_GetText(Text, RowNumber, ColumnNumber)
+		return JS.Object("Text",Text, "Success",Success)
 	} else {
-		success := LV_GetText(OutputVar, RowNumber, ColumnNumber)
-		inject({Text:OutputVar, Success:success})
+		LV_GetText(OutputVar, RowNumber, ColumnNumber)
+		return OutputVar
 	}
 }
 
@@ -759,13 +736,13 @@ _MouseClickDrag(WhichButton,X1,Y1,X2,Y2,Speed="",R=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "MouseGetPos" is special because it outputs 4 variables.
- * The migrated function returns instead an Object with 4 properties: X, Y, Win, Control.
+ * In JS, we return an Object with 4 properties: X, Y, Win, Control.
  */
 _MouseGetPos(Flag=""){
 	MouseGetPos X, Y, Win, Control, %Flag%
-	inject({X:X, Y:Y, Win:Win, Control:Control})
+	return JS.Object("X",X, "Y",Y, "Win",Win+0, "Control",Control)
 }
 
 
@@ -795,42 +772,37 @@ _MsgBox(Param1="__Undefined", Title="__Undefined", Text="", Timeout=""){
 
 
 /**
- * Implementation: Special.
- * "OnClipboardChange" is special because it's a built-in label.
- * In JS, it becomes a function that registers a closure.
- */
-_OnClipboardChange(Closure=""){
-	global closureOnClipboardChange := Closure
-}
-
-
-/**
- * Implementation: Special.
+ * Implementation: Minor change (target label becomes closure).
  * "OnExit" is special because it uses labels.
  * The migrated function uses instead closures.
  */
 _OnExit(Closure=""){
-	global closureOnExit := Closure
-	OnExit, LabelOnExit
+	closures["OnExit"] := Closure
 }
 
 
 /**
- * Implementation: Special.
- * "OnMessage" is special because it function names.uses closures instead of function names.
- * In JS, there are several changes:
- *		- the function name became a closure
- * 		- the return values have been completely stripped out (it now returns undefined).
- * 		- the second parameter is now mandatory. To turn off monitoring, use the empty string.
+ * Implementation: Minor change (target function becomes closure)
+ * "OnMessage" is special because it uses function names.
+ * In JS, the function name becomes a closure.
  */
-_OnMessage(MsgNumber, Closure, MaxThreads=1){
-	global mapOnMessageClosures
-	if (Closure == "") {
-		mapOnMessageClosures.Remove(MsgNumber)
+_OnMessage(MsgNumber, Closure="__Undefined", MaxThreads=1){
+    key := "OnMessage" . MsgNumber
+    fn := closures[key]
+    if (Closure == "__Undefined") {
+        return fn
+    } else if (Closure == "") {
+		closures.Remove(key)
 		OnMessage(MsgNumber, "", MaxThreads)
+        return fn
 	} else {
-		mapOnMessageClosures[MsgNumber] := Closure
-		OnMessage(MsgNumber, "OnMessageClosure", MaxThreads)
+		closures[key] := Closure
+        OnMessage(MsgNumber, "OnMessageClosure", MaxThreads)
+        if (fn) {
+            return fn
+        } else {
+            return Closure
+        }
 	}
 }
 
@@ -840,16 +812,6 @@ _OnMessage(MsgNumber, Closure, MaxThreads=1){
  */
 _OutputDebug(Text){
 	OutputDebug %Text%
-}
-
-
-/**
- * Implementation: Special.
- * Because the command-line parameters syntax (1, 2, 3, etc.) is nonsensical in JS, an alternative has been provided
- * through the "Parameters" global array.
- */
-_Parameters(){
-	inject(getArgs())
 }
 
 
@@ -866,18 +828,18 @@ _Pause(State="",OperateOnUnderlyingThread=""){
  */
 _PixelGetColor(X,Y,Flags=""){
 	PixelGetColor OutputVar,%X%,%Y%,%Flags%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "PixelSearch" is special because it outputs 2 variables.
- * The migrated function returns instead an Object with 2 properties: X, Y.
+ * In JS, we return an Object with 2 properties: X, Y.
  */
 _PixelSearch(X1,Y1,X2,Y2,ColorID,Variation="",Flags=""){
 	PixelSearch X,Y,%X1%,%Y1%,%X2%,%Y2%,%ColorID%,%Variation%,%Flags%
-	inject({X:X, Y:Y})
+	return JS.Object("X",X, "Y",Y)
 }
 
 
@@ -906,6 +868,7 @@ _Progress(ProgressParam1,SubText="",MainText="",WinTitle="",FontName=""){
 
 
 /**
+ * Implementation: Major change.
  * "Random" is special because it accepts two modes:
  * 		1) Normal mode (with Min & Max as parameters). This is the default mode.
  *		2) Re-seeding mode (with NewSeed as parameter)
@@ -917,7 +880,7 @@ _Random(Min="",Max="",NewSeed=""){
 		Random,,%NewSeed%
 	} else {
 		Random OutputVar,%Min%,%Max%
-		inject(OutputVar,"Number")
+		return OutputVar+0
 	}
 }
 
@@ -931,7 +894,7 @@ _RegDelete(RootKey,SubKey,ValueName=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * Because RegExMatch performs two roles, we cannot migrate it to JS 100% unchanged. The two roles are:
  *		1) returns found position
  *		2) fills a ByRef variable
@@ -952,33 +915,32 @@ _RegExMatch(Haystack, NeedleRegEx, StartingPosition=1, Advanced=0){
 			}
 		}
 		RegExMatch(Haystack, NeedleRegEx, Match, StartingPosition)
-		output := {}
-		output.Pos := []
-		output.Len := []
-		output.Value := []
-		output.Name := []
-		output.Count := Match.Count()
-		output.Mark := Match.Mark()
-		len := Match.Count() + 1
-		Loop, %len%
+        
+        Pos := JS.Array()
+        Len := JS.Array()
+        Value := JS.Array()
+        Name := JS.Array()        
+        a := ["Pos",Pos, "Len",Len, "Value",Value, "Name",Name, "Count",Match.Count(), "Mark",Match.Mark()]
+		n := Match.Count() + 1
+		Loop, %n%
 		{
-			index := A_Index
-			output.Pos[index] := Match.Pos(index)
-			output.Len[index] := Match.Len(index)
-			output.Value[index] := Match.Value(index)
-			output.Name[index] := Match.Name(index)
-			output[index] := Match[index]
+			index := A_Index - 1
+            Pos.push(Match.Pos(index))
+            Len.push(Match.Len(index))
+            Value.push(Match.Value(index))
+            Name.push(Match.Name(index))
+            a.Insert(index)
+            a.Insert(Match[index])
 		}
-		inject(output)
+		return JS.Object(a*)
 	} else {
-		FoundPos := RegExMatch(Haystack, NeedleRegEx, "", StartingPosition)
-		inject(FoundPos, "Number")
+		return RegExMatch(Haystack, NeedleRegEx, "", StartingPosition)
 	}
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * "RegExReplace" is special because it performs 2 roles:
  *		1) returns the replaced string. This mode is default (Advanced=0)
  *		2) fills the Count ByRef variable. This mode is triggered by non-empty values of Advanced. In this case,
@@ -987,9 +949,9 @@ _RegExMatch(Haystack, NeedleRegEx, StartingPosition=1, Advanced=0){
 _RegExReplace(Haystack, NeedleRegEx, Replacement="", Limit=-1, StartingPosition=1, Advanced=0){
 	Text := RegExReplace(Haystack, NeedleRegEx, Replacement, Count, Limit, StartingPosition)
 	if (Advanced) {
-		inject({Text:Text, Count:Count})
+		return JS.Object("Text",Text, "Count",Count)
 	} else {
-		inject(Text)
+		return Text
 	}
 }
 
@@ -999,7 +961,7 @@ _RegExReplace(Haystack, NeedleRegEx, Replacement="", Limit=-1, StartingPosition=
  */
 _RegRead(RootKey,SubKey,ValueName=""){
 	RegRead OutputVar,%RootKey%,%SubKey%,%ValueName%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1020,11 +982,28 @@ _Reload(){
 
 
 /**
+ * Implementation: Addition.
+ * "Require" is similar to "#Include", but it differs in one crucial way:
+ * "Require" evaluates the script in the window scope, while "#Include"
+ * evaluates the script in the local scope ("as though the specified file's
+ * contents are present at this exact position").
+ * Notes:
+ *      ● The evaluation takes place instantly (synchronous)
+ *      ● "Require" could also be written as "window.eval(FileRead(path))"
+ *      ● "#Include" could also be written as "eval(FileRead(path))"
+ */
+_Require(path){
+    FileRead, content, %path%
+    window.eval(content) ; seems to work ok in IE8 at this point
+}
+
+
+/**
  * Implementation: Normalization.
  */
 _Run(Target, WorkingDir="", Flags=""){
-	Run %Target%, %WorkingDir%, %Flags%, OutputVarPID
-	inject(OutputVarPID)
+	Run %Target%, %WorkingDir%, %Flags%, OutputVar
+	return OutputVar
 }
 
 
@@ -1037,7 +1016,7 @@ _RunAs(User="",Password="",Domain=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change (doesn't return exit code).
  * "RunWait" is special because it sets a process ID which can be read by another thread.
  * For JS, we cannot implement this feature and therefore don't return any PID (as opposed to "Run")
  */
@@ -1090,8 +1069,6 @@ _SendMessage(Msg,wParam="",lParam="",Control="",WinTitle="",WinText="",ExcludeTi
  * Implementation: Normalization.
  */
 _SendMode(Mode){
-	global threadDefaults
-	threadDefaults["SendMode"] := [Mode]
 	SendMode %Mode%
 }
 
@@ -1116,8 +1093,6 @@ _SendRaw(Keys){
  * Implementation: Normalization.
  */
 _SetBatchLines(IntervalOrLineCount){
-	global threadDefaults
-	threadDefaults["SetBatchLines"] := [IntervalOrLineCount]
 	SetBatchLines %IntervalOrLineCount%
 }
 
@@ -1134,8 +1109,6 @@ _SetCapslockState(State=""){
  * Implementation: Normalization.
  */
 _SetControlDelay(Delay){
-	global threadDefaults
-	threadDefaults["SetControlDelay"] := [Delay]
 	SetControlDelay %Delay%
 }
 
@@ -1144,8 +1117,6 @@ _SetControlDelay(Delay){
  * Implementation: Normalization.
  */
 _SetDefaultMouseSpeed(Speed){
-	global threadDefaults
-	threadDefaults["SetDefaultMouseSpeed"] := [Speed]
 	SetDefaultMouseSpeed %Speed%
 }
 
@@ -1154,8 +1125,6 @@ _SetDefaultMouseSpeed(Speed){
  * Implementation: Normalization.
  */
 _SetFormat(NumberType,Format){
-	global threadDefaults
-	threadDefaults["SetFormat"] := [NumberType,Format]
 	SetFormat %NumberType%,%Format%
 }
 
@@ -1164,8 +1133,6 @@ _SetFormat(NumberType,Format){
  * Implementation: Normalization.
  */
 _SetKeyDelay(Delay="",PressDuration="",Play=""){
-	global threadDefaults
-	threadDefaults["SetKeyDelay"] := [Delay,PressDuration,Play]
 	SetKeyDelay %Delay%,%PressDuration%,%Play%
 }
 
@@ -1174,8 +1141,6 @@ _SetKeyDelay(Delay="",PressDuration="",Play=""){
  * Implementation: Normalization.
  */
 _SetMouseDelay(Delay,Play=""){
-	global threadDefaults
-	threadDefaults["SetMouseDelay"] := [Delay,Play]
 	SetMouseDelay %Delay%,%Play%
 }
 
@@ -1208,8 +1173,6 @@ _SetScrollLockState(State=""){
  * Implementation: Normalization.
  */
 _SetStoreCapslockMode(OnOrOff){
-	global threadDefaults
-	threadDefaults["SetStoreCapslockMode"] := [OnOrOff]
 	SetStoreCapslockMode %OnOrOff%
 }
 
@@ -1217,17 +1180,7 @@ _SetStoreCapslockMode(OnOrOff){
 /**
  * Implementation: Normalization.
  */
-_SetTimer(Closure="",Period="",Priority=""){
-	SetTimer %Closure%,%Period%,%Priority%
-}
-
-
-/**
- * Implementation: Normalization.
- */
 _SetTitleMatchMode(Flag){
-	global threadDefaults
-	threadDefaults["SetTitleMatchMode"] := [Flag]
 	SetTitleMatchMode %Flag%
 }
 
@@ -1236,8 +1189,6 @@ _SetTitleMatchMode(Flag){
  * Implementation: Normalization.
  */
 _SetWinDelay(Delay){
-	global threadDefaults
-	threadDefaults["SetWinDelay"] := [Delay]
 	SetWinDelay %Delay%
 }
 
@@ -1267,14 +1218,14 @@ _Sleep(DelayInMilliseconds){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * "Sort" is special because it modifies a ByRef variable.
  * For JS, we made it a return value.
- * Also, we cannot implement the "F MyFunction" flag.
+ * TODO: implement the "F MyFunction" flag.
  */
 _Sort(VarName,Options=""){
 	Sort VarName, %Options%
-	inject(VarName)
+	return VarName
 }
 
 
@@ -1287,16 +1238,16 @@ _SoundBeep(Frequency="",Duration=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Normalization.
  * "SoundGet" is special because it has multiple return types (Number or String).
  */
 _SoundGet(ComponentType="",ControlType="",DeviceNumber=""){
 	SoundGet OutputVar, %ComponentType%, %ControlType%, %DeviceNumber%
-	stringControlTypes := {ONOFF:1, MUTE:1, MONO:1, LOUDNESS:1, STEREOENH:1, BASSBOOST:1}
-	if (stringControlTypes.HasKey(ControlType) || OutputVar == "") {
-		inject(OutputVar)
+	static STRING_CONTROL_TYPES := {ONOFF:1, MUTE:1, MONO:1, LOUDNESS:1, STEREOENH:1, BASSBOOST:1}
+	if (STRING_CONTROL_TYPES.HasKey(ControlType)) {
+		return OutputVar
 	} else {
-		inject(OutputVar, "Number")
+		return OutputVar+0
 	}
 }
 
@@ -1306,7 +1257,7 @@ _SoundGet(ComponentType="",ControlType="",DeviceNumber=""){
  */
 _SoundGetWaveVolume(DeviceNumber=""){
 	SoundGetWaveVolume OutputVar,%DeviceNumber%
-	inject(OutputVar,"Number")
+	return OutputVar+0
 }
 
 
@@ -1359,13 +1310,13 @@ _SplashTextOn(Width="",Height="",Title="",Text=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "SplitPath" is special because it outputs 5 variables.
- * The migrated function returns instead an Object with 5 properties: FileName, Dir, Extension, NameNoExt, Drive
+ * In JS, we return an Object with 5 properties: FileName, Dir, Extension, NameNoExt, Drive
  */
 _SplitPath(InputVar){
 	SplitPath InputVar, FileName, Dir, Extension, NameNoExt, Drive
-	inject({FileName:FileName, Dir:Dir, Extension:Extension, NameNoExt:NameNoExt, Drive:Drive})
+	return JS.Object("FileName",FileName, "Dir",Dir, "Extension",Extension, "NameNoExt",NameNoExt, "Drive",Drive)
 }
 
 
@@ -1374,7 +1325,7 @@ _SplitPath(InputVar){
  */
 _StatusBarGetText(Part="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	StatusBarGetText OutputVar,%Part%,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1390,8 +1341,6 @@ _StatusBarWait(BarText="",Seconds="",Part#="",WinTitle="",WinText="",Interval=""
  * Implementation: Normalization.
  */
 _StringCaseSense(Flag){
-	global threadDefaults
-	threadDefaults["StringCaseSense"] := [Flag]
 	StringCaseSense %Flag%
 }
 
@@ -1401,7 +1350,7 @@ _StringCaseSense(Flag){
  */
 _StringGetPos(InputVar,SearchText,LRFlag="",Offset=""){
 	StringGetPos OutputVar,InputVar, %SearchText%,%LRFlag%,%Offset%
-	inject(OutputVar)
+	return OutputVar+0
 }
 
 
@@ -1410,7 +1359,7 @@ _StringGetPos(InputVar,SearchText,LRFlag="",Offset=""){
  */
 _StringLeft(InputVar,Count){
 	StringLeft OutputVar,InputVar,%Count%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1419,7 +1368,7 @@ _StringLeft(InputVar,Count){
  */
 _StringLen(InputVar){
 	StringLen OutputVar,InputVar
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1428,7 +1377,7 @@ _StringLen(InputVar){
  */
 _StringLower(InputVar,T=""){
 	StringLower OutputVar,InputVar,%T%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1437,7 +1386,7 @@ _StringLower(InputVar,T=""){
  */
 _StringMid(InputVar,StartChar,Count="",L=""){
 	StringMid OutputVar,InputVar,%StartChar%,%Count%,%L%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1446,7 +1395,7 @@ _StringMid(InputVar,StartChar,Count="",L=""){
  */
 _StringReplace(InputVar,SearchText,ReplaceText="",ReplaceAll=""){
 	StringReplace OutputVar,InputVar,%SearchText%,%ReplaceText%,%ReplaceAll%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1455,7 +1404,7 @@ _StringReplace(InputVar,SearchText,ReplaceText="",ReplaceAll=""){
  */
 _StringRight(InputVar,Count){
 	StringRight OutputVar,InputVar,%Count%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1464,7 +1413,7 @@ _StringRight(InputVar,Count){
  */
 _StringTrimLeft(InputVar,Count){
 	StringTrimLeft OutputVar,InputVar,%Count%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1473,7 +1422,7 @@ _StringTrimLeft(InputVar,Count){
  */
 _StringTrimRight(InputVar,Count){
 	StringTrimRight OutputVar,InputVar,%Count%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1482,7 +1431,7 @@ _StringTrimRight(InputVar,Count){
  */
 _StringUpper(InputVar,T=""){
 	StringUpper OutputVar,InputVar,%T%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1495,7 +1444,7 @@ _Suspend(Mode=""){
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "SysGet" is special because it has multiple return types (Number|String|Object).
  * If Subcommand="Monitor", the output will be an Object with 4 properties: Left, Top, Right, Bottom.
  * If Subcommand="MonitorName", the output will be String.
@@ -1504,10 +1453,12 @@ _Suspend(Mode=""){
 _SysGet(Subcommand,Param2=""){
 	SysGet v, %Subcommand%, %Param2%
 	if (Subcommand == "Monitor") {
-		inject({Left:vLeft, Top:vTop, Right:vRight, Bottom:vBottom})
+		return JS.Object("Left",vLeft, "Top",vTop, "Right",vRight, "Bottom",vBottom)
+	} else if (Subcommand == "MonitorName") {
+		return v
 	} else {
-		inject(v)
-	}
+        return v+0
+    }
 }
 
 
@@ -1515,8 +1466,6 @@ _SysGet(Subcommand,Param2=""){
  * Implementation: Normalization.
  */
 _Thread(Subcommand,Param2="",Param3=""){
-	global threadDefaults
-	threadDefaults["Thread"] := [Subcommand,Param2,Param3]
 	Thread %Subcommand%,%Param2%,%Param3%
 }
 
@@ -1531,10 +1480,16 @@ _ToolTip(Text="",X="",Y="",WhichToolTip=""){
 
 /**
  * Implementation: Normalization.
+ * "Transform" is special because it has multiple return types (Number or String).
  */
 _Transform(Cmd,Value1,Value2=""){
 	Transform OutputVar, %Cmd%, %Value1%, %Value2%
-	inject(OutputVar)
+	static STRING_COMMANDS := {Chr:1, HTML:1}
+	if (STRING_COMMANDS.HasKey(Cmd)) {
+		return OutputVar
+	} else {
+		return OutputVar+0
+	}
 }
 
 
@@ -1546,7 +1501,7 @@ _TrayTip(Title="",Text="",Seconds="",Options=""){
 }
 
 /**
- * Implementation: Special.
+ * Implementation: Major change.
  * "TV_GetText" is special because it outputs 2 variables (a return value and a ByRef)
  * The migrated function has two modes:
  * 		1) the default mode (Advanced=0) is to return the retrieved text. Note that this behavior differs from the one in AHK.
@@ -1554,11 +1509,11 @@ _TrayTip(Title="",Text="",Seconds="",Options=""){
  */
 _TV_GetText(ItemID, Advanced=0){
 	if (Advanced) {
-		TV_GetText(OutputVar, ItemID)
-		inject(OutputVar)
+        Success := TV_GetText(OutputVar, ItemID)
+		return JS.Object("Text", OutputVar, "Success",Success)
 	} else {
-		Success := LV_GetText(OutputVar, ItemID)
-		inject({Text:OutputVar, Success:Success})
+		TV_GetText(OutputVar, ItemID)
+		return OutputVar
 	}
 }
 
@@ -1596,22 +1551,39 @@ _WinClose(WinTitle="",WinText="",SecondsToWait="",ExcludeTitle="",ExcludeText=""
 
 
 /**
- * Implementation: Normalization.
+ * Implementation: Minor change (returns Object).
+ * "WinGet" is special because it may output an pseudo-array.
+ * In JS, if Cmd=List, we return an Array of Numbers.
+ * TODO: implement the List Cmd
  */
 _WinGet(Cmd="",WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	WinGet OutputVar,%Cmd%,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+    StringLower, Cmd, Cmd
+    static STRING_COMMANDS := {ProcessName:1, ProcessPath:1, ControlList:1, ControlListHwnd:1, Style:1, ExStyle:1}
+    if (Cmd == "list") {
+        a := []
+        Loop, %OutputVar%
+        {
+            a.Insert(OutputVar%A_Index% + 0)
+        }
+        return JS.Array(a*) ; variadic call
+    } else if (STRING_COMMANDS.HasKey(Cmd)) {
+		return OutputVar
+	} else {
+		return OutputVar+0
+	}
+	
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "WinGetActiveStats" is special because it outputs 5 variables.
- * The migrated function returns instead an Object with 5 properties: X, Y, Width, Height, Title.
+ * In JS, we return an Object with 5 properties: X, Y, Width, Height, Title.
  */
 _WinGetActiveStats(){
 	WinGetActiveStats Title,Width,Height,X,Y
-	inject({Title:Title, Width:Width, Height:Height, X:X, Y:Y})
+	return JS.Object("Title",Title, "Width",Width, "Height",Height, "X",X, "Y",Y)
 }
 
 
@@ -1620,7 +1592,7 @@ _WinGetActiveStats(){
  */
 _WinGetActiveTitle(){
 	WinGetActiveTitle OutputVar
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1629,18 +1601,18 @@ _WinGetActiveTitle(){
  */
 _WinGetClass(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	WinGetClass OutputVar,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
 /**
- * Implementation: Special.
+ * Implementation: Minor change (returns Object).
  * "WinGetPos" is special because it outputs 4 variables.
- * The migrated function returns instead an Object with 4 properties: X, Y, Width, Height.
+ * In JS, we return an Object with 4 properties: X, Y, Width, Height.
  */
 _WinGetPos(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	WinGetPos X, Y, Width, Height, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-	inject({Width:Width, Height:Height, X:X, Y:Y})
+	return JS.Object("Width",Width, "Height",Height, "X",X, "Y",Y)
 }
 
 
@@ -1649,7 +1621,7 @@ _WinGetPos(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
  */
 _WinGetText(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	WinGetText OutputVar,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 
@@ -1658,7 +1630,7 @@ _WinGetText(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
  */
 _WinGetTitle(WinTitle="",WinText="",ExcludeTitle="",ExcludeText=""){
 	WinGetTitle OutputVar,%WinTitle%,%WinText%,%ExcludeTitle%,%ExcludeText%
-	inject(OutputVar)
+	return OutputVar
 }
 
 

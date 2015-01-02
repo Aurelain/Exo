@@ -7,7 +7,6 @@ Imagine the ecosystem of JavaScript libraries (jQuery, CreateJS, etc.) in the ha
 ## Description
 *Exo* exposes most built-in commands/functions/variables of AHK to JavaScript, allowing you to practically write AHK inside JS (with JS syntax).
 
-
 There are several advantages to using JS, rather than AhkScript:
   1. A lot of people are already familiar with JS, so there's no need to learn the peculiarities of the AhkScript-syntax.
   2. Gain access to a huge repository of libraries written in JS.
@@ -19,7 +18,7 @@ It does all this by embedding a browser (Internet Explorer) and hooking into it 
 
 ## Goals
 While migrating the keywords, the following goals were set:
-- try to port 100% of the functionality (88% achieved)
+- try to port 100% of the functionality (89% achieved)
 - try as much as possible to conform with the AHK documentation
 - provide useful typing (i.e. we shouldn't return String types everywhere only because it's easy)
 
@@ -41,22 +40,33 @@ Sleep(1000);
 ExitApp();
 ```
 
+
+## About
+- Authors: **Aurelain** (aurelain@gmail.com), with major contributions from **Lexikos**
+- License: [WTFPL](http://www.wtfpl.net/)
+- Version: 0.95
+- Minimum requirements:
+  - **AutoHotkey v1.1.17.01**
+  - Internet Explorer 8
+  - Windows XP
+
+
 ## Migration Guide
 This section lists all relevant AHK keywords (Commands, Function, Directives and Variables) and illustrates their counterpart in JS. In most cases, there is no significant change and everything is intuitive.
 
-The breakdown for the following 464 keywords:
-- 0) 14% were disregarded because they provided duplicate functionality
-- 1) 35% were directly migrated (AHK Functions became JS Functions, AHK Variables became JS Variables)
-- 2) 34% were migrated through subtle conversion (AHK Commands became JS Functions)
-- 3) 5% were migrated through minor adjustment (AHK multiple-OutputVars became JS return Objects)
-- 4) 8% could not be migrated, but there are alternatives or future prospects of being implemented.
+The breakdown for the following 470 keywords:
+- 0) 13% were disregarded because they provided duplicate functionality
+- 1) 37% were directly migrated (AHK Functions became JS Functions, AHK Variables became JS Variables)
+- 2) 33% were migrated through subtle conversion (AHK Commands became JS Functions)
+- 3) 6% were migrated through minor adjustment (AHK multiple-OutputVars became JS return Objects)
+- 4) 7% could not be migrated, but there are alternatives or future prospects of being implemented.
 - 5) 4% will never be migrated (mainly Directives and some very specific AHK Commands)
 
 Keywords that were **not migrated (categories 0, 4 and 5)** are marked bold.
 
 AHK Keyword | JS Implementation | JS Type
 :----------|:---------------|:-------
-[1, 2, 3, etc.](http://ahkscript.org/docs/Variables.htm#CommandLine)|An alternative has been provided: "Parameters"|Array
+[1, 2, 3, etc.](http://ahkscript.org/docs/Variables.htm#CommandLine)|Replacement: "A_Args"|Array
 [A_AhkPath](http://ahkscript.org/docs/Variables.htm#AhkPath)|Identical|String
 [A_AhkVersion](http://ahkscript.org/docs/Variables.htm#AhkVersion)|Identical|String
 [A_AppData](http://ahkscript.org/docs/Variables.htm#AppData)|Identical|String
@@ -77,19 +87,19 @@ AHK Keyword | JS Implementation | JS Type
 [A_DetectHiddenText](http://ahkscript.org/docs/Variables.htm#DetectHiddenText)|Identical|String
 [A_DetectHiddenWindows](http://ahkscript.org/docs/Variables.htm#DetectHiddenWindows)|Identical|String
 **[A_EndChar](http://ahkscript.org/docs/Variables.htm#EndChar )**|**Cannot use yet**|**N/A**
-**[A_EventInfo](http://ahkscript.org/docs/Variables.htm#EventInfo)**|**Cannot use yet**|**N/A**
+[A_EventInfo](http://ahkscript.org/docs/Variables.htm#EventInfo)|Identical|String
 [A_ExitReason](http://ahkscript.org/docs/Variables.htm#ExitReason)|Identical|String
 [A_FileEncoding](http://ahkscript.org/docs/Variables.htm#FileEncoding)|Identical|String
 [A_FormatFloat](http://ahkscript.org/docs/Variables.htm#FormatFloat)|Identical|String
 [A_FormatInteger](http://ahkscript.org/docs/Variables.htm#FormatInteger)|Identical|String
-**[A_Gui](http://ahkscript.org/docs/Variables.htm#Gui )**|**Cannot use yet**|**N/A**
-**[A_GuiControl](http://ahkscript.org/docs/Variables.htm#GuiControl )**|**Cannot use yet**|**N/A**
-**[A_GuiControlEvent](http://ahkscript.org/docs/Variables.htm#GuiControlEvent )**|**Cannot use yet**|**N/A**
-**[A_GuiEvent](http://ahkscript.org/docs/Variables.htm#GuiEvent)**|**Cannot use yet**|**N/A**
-**[A_GuiHeight](http://ahkscript.org/docs/Variables.htm#GuiWidth)**|**Cannot use yet**|**N/A**
-**[A_GuiWidth](http://ahkscript.org/docs/Variables.htm#GuiWidth)**|**Cannot use yet**|**N/A**
-**[A_GuiX](http://ahkscript.org/docs/Variables.htm#GuiX)**|**Cannot use yet**|**N/A**
-**[A_GuiY](http://ahkscript.org/docs/Variables.htm#GuiY )**|**Cannot use yet**|**N/A**
+[A_Gui](http://ahkscript.org/docs/Variables.htm#Gui )|Identical|String
+[A_GuiControl](http://ahkscript.org/docs/Variables.htm#GuiControl )|Identical|String
+[A_GuiControlEvent](http://ahkscript.org/docs/Variables.htm#GuiControlEvent )|Identical|String
+[A_GuiEvent](http://ahkscript.org/docs/Variables.htm#GuiEvent)|Identical|String
+[A_GuiHeight](http://ahkscript.org/docs/Variables.htm#GuiWidth)|Identical|Number
+[A_GuiWidth](http://ahkscript.org/docs/Variables.htm#GuiWidth)|Identical|Number
+[A_GuiX](http://ahkscript.org/docs/Variables.htm#GuiX)|Identical|Number
+[A_GuiY](http://ahkscript.org/docs/Variables.htm#GuiY )|Identical|Number
 [A_Hour](http://ahkscript.org/docs/Variables.htm#Hour)|Identical|String
 [A_IconFile](http://ahkscript.org/docs/Variables.htm#IconFile)|Identical|String
 [A_IconHidden](http://ahkscript.org/docs/Variables.htm#IconHidden)|Identical|Number
@@ -199,19 +209,19 @@ AHK Keyword | JS Implementation | JS Type
 [ASin()](http://ahkscript.org/docs/Functions.htm#ASin)|Identical|Number
 [ATan()](http://ahkscript.org/docs/Functions.htm#ATan)|Identical|Number
 **[AutoTrim](http://ahkscript.org/docs/commands/AutoTrim.htm)**|**Not needed (AHK specific)**|**N/A**
-[BlockInput](http://ahkscript.org/docs/commands/BlockInput.htm)|Normalization|Undefined
+[BlockInput](http://ahkscript.org/docs/commands/BlockInput.htm)|Normalization|Empty
 [Ceil()](http://ahkscript.org/docs/Functions.htm#Ceil)|Identical|Number
 [Chr()](http://ahkscript.org/docs/Functions.htm#Chr)|Identical|String
-[Click](http://ahkscript.org/docs/commands/Click.htm)|Normalization|Undefined
+[Click](http://ahkscript.org/docs/commands/Click.htm)|Normalization|Empty
 [Clipboard](http://ahkscript.org/docs/misc/Clipboard.htm)|Identical|String
 [ClipboardAll](http://ahkscript.org/docs/misc/Clipboard.htm#ClipboardAll)|Identical|String
-[ClipWait](http://ahkscript.org/docs/commands/ClipWait.htm)|Normalization|Undefined
-**[ComObjActive()](undefined)**|**Cannot use yet**|**N/A**
+[ClipWait](http://ahkscript.org/docs/commands/ClipWait.htm)|Normalization|Empty
+**[ComObjActive()](http://ahkscript.org/docs/commands/ComObjActive.htm)**|**Cannot use yet**|**N/A**
 **[ComObjArray()](http://ahkscript.org/docs/commands/ComObjArray.htm)**|**Cannot use yet**|**N/A**
 **[ComObjConnect()](http://ahkscript.org/docs/commands/ComObjConnect.htm)**|**Cannot use yet**|**N/A**
 **[ComObjCreate()](http://ahkscript.org/docs/commands/ComObjCreate.htm)**|**Cannot use yet**|**N/A**
-**[ComObject()](undefined)**|**Cannot use yet**|**N/A**
-**[ComObjEnwrap()](undefined)**|**Not needed (Deprecated)**|**N/A**
+**[ComObject()](http://ahkscript.org/docs/commands/ComObjActive.htm)**|**Cannot use yet**|**N/A**
+**[ComObjEnwrap()](http://ahkscript.org/docs/commands/ComObjActive.htm)**|**Not needed (Deprecated)**|**N/A**
 **[ComObjError()](http://ahkscript.org/docs/commands/ComObjError.htm)**|**Cannot use yet**|**N/A**
 **[ComObjFlags()](http://ahkscript.org/docs/commands/ComObjFlags.htm)**|**Cannot use yet**|**N/A**
 **[ComObjGet()](http://ahkscript.org/docs/commands/ComObjGet.htm)**|**Cannot use yet**|**N/A**
@@ -222,24 +232,24 @@ AHK Keyword | JS Implementation | JS Type
 **[ComObjUnwrap()](http://ahkscript.org/docs/commands/ComObjActive.htm)**|**Not needed (Deprecated)**|**N/A**
 **[ComObjValue()](http://ahkscript.org/docs/commands/ComObjValue.htm)**|**Cannot use yet**|**N/A**
 [ComSpec](http://ahkscript.org/docs/Variables.htm#ComSpec)|Identical|String
-[Control](http://ahkscript.org/docs/commands/Control.htm)|Normalization|Undefined
-[ControlClick](http://ahkscript.org/docs/commands/ControlClick.htm)|Normalization|Undefined
-[ControlFocus](http://ahkscript.org/docs/commands/ControlFocus.htm)|Normalization|Undefined
+[Control](http://ahkscript.org/docs/commands/Control.htm)|Normalization|Empty
+[ControlClick](http://ahkscript.org/docs/commands/ControlClick.htm)|Normalization|Empty
+[ControlFocus](http://ahkscript.org/docs/commands/ControlFocus.htm)|Normalization|Empty
 [ControlGet](http://ahkscript.org/docs/commands/ControlGet.htm)|Normalization|String
 [ControlGetFocus](http://ahkscript.org/docs/commands/ControlGetFocus.htm)|Normalization|String
-[ControlGetPos](http://ahkscript.org/docs/commands/ControlGetPos.htm)|ControlGetPos([ Control, WinTitle, WinText, ExcludeTitle, ExcludeText]) {X, Y, Width, Height}|{}
+[ControlGetPos](http://ahkscript.org/docs/commands/ControlGetPos.htm)|Minor change (returns Object)|{}
 [ControlGetText](http://ahkscript.org/docs/commands/ControlGetText.htm)|Normalization|String
-[ControlMove](http://ahkscript.org/docs/commands/ControlMove.htm)|Normalization|Undefined
-[ControlSend](http://ahkscript.org/docs/commands/ControlSend.htm)|Normalization|Undefined
-[ControlSendRaw](http://ahkscript.org/docs/commands/ControlSend.htm)|Normalization|Undefined
-[ControlSetText](http://ahkscript.org/docs/commands/ControlSetText.htm)|Normalization|Undefined
-[CoordMode](http://ahkscript.org/docs/commands/CoordMode.htm)|Normalization|Undefined
+[ControlMove](http://ahkscript.org/docs/commands/ControlMove.htm)|Normalization|Empty
+[ControlSend](http://ahkscript.org/docs/commands/ControlSend.htm)|Normalization|Empty
+[ControlSendRaw](http://ahkscript.org/docs/commands/ControlSend.htm)|Normalization|Empty
+[ControlSetText](http://ahkscript.org/docs/commands/ControlSetText.htm)|Normalization|Empty
+[CoordMode](http://ahkscript.org/docs/commands/CoordMode.htm)|Normalization|Empty
 [Cos()](http://ahkscript.org/docs/Functions.htm#Cos)|Identical|Number
-[Critical](http://ahkscript.org/docs/commands/Critical.htm)|Normalization|Undefined
-[DetectHiddenText](http://ahkscript.org/docs/commands/DetectHiddenText.htm)|Normalization|Undefined
-[DetectHiddenWindows](http://ahkscript.org/docs/commands/DetectHiddenWindows.htm)|Normalization|Undefined
+[Critical](http://ahkscript.org/docs/commands/Critical.htm)|Normalization|Empty
+[DetectHiddenText](http://ahkscript.org/docs/commands/DetectHiddenText.htm)|Normalization|Empty
+[DetectHiddenWindows](http://ahkscript.org/docs/commands/DetectHiddenWindows.htm)|Normalization|Empty
 [DllCall()](http://ahkscript.org/docs/commands/DllCall.htm)|Identical|String
-[Drive](http://ahkscript.org/docs/commands/Drive.htm)|Normalization|Undefined
+[Drive](http://ahkscript.org/docs/commands/Drive.htm)|Normalization|Empty
 [DriveGet](http://ahkscript.org/docs/commands/DriveGet.htm)|Normalization|String
 [DriveSpaceFree](http://ahkscript.org/docs/commands/DriveSpaceFree.htm)|Normalization|Number
 **[Edit](http://ahkscript.org/docs/commands/Edit.htm)**|**Cannot use yet**|**N/A**
@@ -247,40 +257,40 @@ AHK Keyword | JS Implementation | JS Type
 **[EnvDiv](http://ahkscript.org/docs/commands/EnvDiv.htm)**|**Not needed (Feature duplication)**|**N/A**
 [EnvGet](http://ahkscript.org/docs/commands/EnvGet.htm)|Normalization|String
 **[EnvMult](http://ahkscript.org/docs/commands/EnvMult.htm)**|**Not needed (Feature duplication)**|**N/A**
-[EnvSet](http://ahkscript.org/docs/commands/EnvSet.htm)|Normalization|Undefined
+[EnvSet](http://ahkscript.org/docs/commands/EnvSet.htm)|Normalization|Empty
 **[EnvSub](http://ahkscript.org/docs/commands/EnvSub.htm)**|**Not needed (Feature duplication)**|**N/A**
-[EnvUpdate](http://ahkscript.org/docs/commands/EnvUpdate.htm)|Normalization|Undefined
+[EnvUpdate](http://ahkscript.org/docs/commands/EnvUpdate.htm)|Normalization|Empty
 [ErrorLevel](http://ahkscript.org/docs/misc/ErrorLevel.htm)|Identical|N/A
 **[Exception](http://ahkscript.org/docs/commands/Throw.htm#Exception)**|**Not needed (AHK specific)**|**N/A**
 **[Exit](http://ahkscript.org/docs/commands/Exit.htm)**|**Not needed (AHK specific)**|**N/A**
-[ExitApp](http://ahkscript.org/docs/commands/ExitApp.htm)|Normalization|Undefined
+[ExitApp](http://ahkscript.org/docs/commands/ExitApp.htm)|Normalization|Empty
 [Exp()](http://ahkscript.org/docs/Functions.htm#Exp)|Identical|Number
-[FileAppend](http://ahkscript.org/docs/commands/FileAppend.htm)|Normalization|Undefined
-[FileCopy](http://ahkscript.org/docs/commands/FileCopy.htm)|Normalization|Undefined
-[FileCopyDir](http://ahkscript.org/docs/commands/FileCopyDir.htm)|Normalization|Undefined
-[FileCreateDir](http://ahkscript.org/docs/commands/FileCreateDir.htm)|Normalization|Undefined
-[FileCreateShortcut](http://ahkscript.org/docs/commands/FileCreateShortcut.htm)|Normalization|Undefined
-[FileDelete](http://ahkscript.org/docs/commands/FileDelete.htm)|Normalization|Undefined
-[FileEncoding](http://ahkscript.org/docs/commands/FileEncoding.htm)|Normalization|Undefined
+[FileAppend](http://ahkscript.org/docs/commands/FileAppend.htm)|Normalization|Empty
+[FileCopy](http://ahkscript.org/docs/commands/FileCopy.htm)|Normalization|Empty
+[FileCopyDir](http://ahkscript.org/docs/commands/FileCopyDir.htm)|Normalization|Empty
+[FileCreateDir](http://ahkscript.org/docs/commands/FileCreateDir.htm)|Normalization|Empty
+[FileCreateShortcut](http://ahkscript.org/docs/commands/FileCreateShortcut.htm)|Normalization|Empty
+[FileDelete](http://ahkscript.org/docs/commands/FileDelete.htm)|Normalization|Empty
+[FileEncoding](http://ahkscript.org/docs/commands/FileEncoding.htm)|Normalization|Empty
 [FileExist()](http://ahkscript.org/docs/Functions.htm#FileExist)|Identical|String
 [FileGetAttrib](http://ahkscript.org/docs/commands/FileGetAttrib.htm)|Normalization|String
-[FileGetShortcut](http://ahkscript.org/docs/commands/FileGetShortcut.htm)|FileGetShortcut(LinkFile) {Target, Dir, Args, Description, Icon, IconNum, RunState}|{}
+[FileGetShortcut](http://ahkscript.org/docs/commands/FileGetShortcut.htm)|Minor change (returns Object)|{}
 [FileGetSize](http://ahkscript.org/docs/commands/FileGetSize.htm)|Normalization|Number
 [FileGetTime](http://ahkscript.org/docs/commands/FileGetTime.htm)|Normalization|String
 [FileGetVersion](http://ahkscript.org/docs/commands/FileGetVersion.htm)|Normalization|String
 **[FileInstall](http://ahkscript.org/docs/commands/FileInstall.htm)**|**Cannot use compile-time features.**|**N/A**
-[FileMove](http://ahkscript.org/docs/commands/FileMove.htm)|Normalization|Undefined
-[FileMoveDir](http://ahkscript.org/docs/commands/FileMoveDir.htm)|Normalization|Undefined
+[FileMove](http://ahkscript.org/docs/commands/FileMove.htm)|Normalization|Empty
+[FileMoveDir](http://ahkscript.org/docs/commands/FileMoveDir.htm)|Normalization|Empty
 **[FileOpen()](http://ahkscript.org/docs/commands/FileOpen.htm)**|**Cannot use yet**|**N/A**
 [FileRead](http://ahkscript.org/docs/commands/FileRead.htm)|Normalization|String
 [FileReadLine](http://ahkscript.org/docs/commands/FileReadLine.htm)|Normalization|String
-[FileRecycle](http://ahkscript.org/docs/commands/FileRecycle.htm)|Normalization|Undefined
-[FileRecycleEmpty](http://ahkscript.org/docs/commands/FileRecycleEmpty.htm)|Normalization|Undefined
-[FileRemoveDir](http://ahkscript.org/docs/commands/FileRemoveDir.htm)|Normalization|Undefined
+[FileRecycle](http://ahkscript.org/docs/commands/FileRecycle.htm)|Normalization|Empty
+[FileRecycleEmpty](http://ahkscript.org/docs/commands/FileRecycleEmpty.htm)|Normalization|Empty
+[FileRemoveDir](http://ahkscript.org/docs/commands/FileRemoveDir.htm)|Normalization|Empty
 [FileSelectFile](http://ahkscript.org/docs/commands/FileSelectFile.htm)|Normalization|String
 [FileSelectFolder](http://ahkscript.org/docs/commands/FileSelectFolder.htm)|Normalization|String
-[FileSetAttrib](http://ahkscript.org/docs/commands/FileSetAttrib.htm)|Normalization|Undefined
-[FileSetTime](http://ahkscript.org/docs/commands/FileSetTime.htm)|Normalization|Undefined
+[FileSetAttrib](http://ahkscript.org/docs/commands/FileSetAttrib.htm)|Normalization|Empty
+[FileSetTime](http://ahkscript.org/docs/commands/FileSetTime.htm)|Normalization|Empty
 [Floor()](http://ahkscript.org/docs/Functions.htm#Floor)|Identical|Number
 [FormatTime](http://ahkscript.org/docs/commands/FormatTime.htm)|Normalization|String
 **[Func()](http://ahkscript.org/docs/Functions.htm#Func)**|**Not needed (AHK specific)**|**N/A**
@@ -291,22 +301,26 @@ AHK Keyword | JS Implementation | JS Type
 [GetKeyVK()](http://ahkscript.org/docs/Functions.htm#GetKeyName)|Identical|Number
 **[Gosub](http://ahkscript.org/docs/commands/Gosub.htm)**|**Cannot use (AHK specific)**|**N/A**
 **[Goto](http://ahkscript.org/docs/commands/Goto.htm)**|**Cannot use (AHK specific)**|**N/A**
-[GroupActivate](http://ahkscript.org/docs/commands/GroupActivate.htm)|Normalization|Undefined
-[GroupAdd](http://ahkscript.org/docs/commands/GroupAdd.htm)|Normalization|Undefined
-[GroupClose](http://ahkscript.org/docs/commands/GroupClose.htm)|Normalization|Undefined
-[GroupDeactivate](http://ahkscript.org/docs/commands/GroupDeactivate.htm)|Normalization|Undefined
-[Gui](http://ahkscript.org/docs/commands/Gui.htm)|Normalization|Undefined
-[GuiClose](http://ahkscript.org/docs/commands/Gui.htm#GuiClose)|GuiClose(Closure)|Undefined
-[GuiControl](http://ahkscript.org/docs/commands/GuiControl.htm)|Normalization|Undefined
+[GroupActivate](http://ahkscript.org/docs/commands/GroupActivate.htm)|Normalization|Empty
+[GroupAdd](http://ahkscript.org/docs/commands/GroupAdd.htm)|Normalization|Empty
+[GroupClose](http://ahkscript.org/docs/commands/GroupClose.htm)|Normalization|Empty
+[GroupDeactivate](http://ahkscript.org/docs/commands/GroupDeactivate.htm)|Normalization|Empty
+[Gui](http://ahkscript.org/docs/commands/Gui.htm)|Normalization|Empty
+[GuiClose](http://ahkscript.org/docs/commands/Gui.htm#GuiClose)|Minor change (built-in label becomes built-in function)|Empty
+[GuiContextMenu](http://ahkscript.org/docs/commands/Gui.htm#GuiContextMenu)|Minor change (built-in label becomes built-in function)|Empty
+[GuiControl](http://ahkscript.org/docs/commands/GuiControl.htm)|Normalization|Empty
 [GuiControlGet](http://ahkscript.org/docs/commands/GuiControlGet.htm)|Normalization|String
-[Hotkey](http://ahkscript.org/docs/commands/Hotkey.htm)|Hotkey(KeyName [, Closure, Options])|Undefined
+[GuiDropFiles](http://ahkscript.org/docs/commands/Gui.htm#GuiDropFiles)|Minor change (built-in label becomes built-in function)|Empty
+[GuiEscape](http://ahkscript.org/docs/commands/Gui.htm#GuiEscape)|Minor change (built-in label becomes built-in function)|Empty
+[GuiSize](http://ahkscript.org/docs/commands/Gui.htm#GuiSize)|Minor change (built-in label becomes built-in function)|Empty
+[Hotkey](http://ahkscript.org/docs/commands/Hotkey.htm)|Minor change (target label becomes closure)|Empty
 [IL_Add()](http://ahkscript.org/docs/commands/ListView.htm#IL_Add)|Identical|Number
 [IL_Create()](http://ahkscript.org/docs/commands/ListView.htm#IL_Create)|Identical|Number
 [IL_Destroy()](http://ahkscript.org/docs/commands/ListView.htm#IL_Destroy)|Identical|Number
-[ImageSearch](http://ahkscript.org/docs/commands/ImageSearch.htm)|ImageSearch( X1, Y1, X2, Y2, ImageFile) {X, Y}|{}
-[IniDelete](http://ahkscript.org/docs/commands/IniDelete.htm)|Normalization|Undefined
+[ImageSearch](http://ahkscript.org/docs/commands/ImageSearch.htm)|Minor change (returns Object)|{}
+[IniDelete](http://ahkscript.org/docs/commands/IniDelete.htm)|Normalization|Empty
 [IniRead](http://ahkscript.org/docs/commands/IniRead.htm)|Normalization|String
-[IniWrite](http://ahkscript.org/docs/commands/IniWrite.htm)|Normalization|Undefined
+[IniWrite](http://ahkscript.org/docs/commands/IniWrite.htm)|Normalization|Empty
 [Input](http://ahkscript.org/docs/commands/Input.htm)|Normalization|String
 [InputBox](http://ahkscript.org/docs/commands/InputBox.htm)|Normalization|String
 [InStr()](http://ahkscript.org/docs/Functions.htm#InStr)|Identical|Number
@@ -314,33 +328,33 @@ AHK Keyword | JS Implementation | JS Type
 **[IsFunc()](http://ahkscript.org/docs/Functions.htm#IsFunc)**|**Not needed (AHK specific)**|**N/A**
 **[IsLabel()](http://ahkscript.org/docs/Functions.htm#IsLabel)**|**Not needed (AHK specific)**|**N/A**
 **[IsObject()](http://ahkscript.org/docs/Functions.htm#IsObject)**|**Not needed (AHK specific)**|**N/A**
-[KeyHistory](http://ahkscript.org/docs/commands/KeyHistory.htm)|Normalization|Undefined
-[KeyWait](http://ahkscript.org/docs/commands/KeyWait.htm)|Normalization|Undefined
-[ListHotkeys](http://ahkscript.org/docs/commands/ListHotkeys.htm)|Normalization|Undefined
+[KeyHistory](http://ahkscript.org/docs/commands/KeyHistory.htm)|Normalization|Empty
+[KeyWait](http://ahkscript.org/docs/commands/KeyWait.htm)|Normalization|Empty
+[ListHotkeys](http://ahkscript.org/docs/commands/ListHotkeys.htm)|Normalization|Empty
 **[ListLines](http://ahkscript.org/docs/commands/ListLines.htm)**|**Cannot implement for JS**|**N/A**
 **[ListVars](http://ahkscript.org/docs/commands/ListVars.htm)**|**Cannot implement for JS**|**N/A**
 [Ln()](http://ahkscript.org/docs/Functions.htm#Ln)|Identical|Number
 [Log()](http://ahkscript.org/docs/Functions.htm#Log)|Identical|Number
-[Loop](http://ahkscript.org/docs/commands/LoopFile.htm)|Loop(Param1, Param2, Param3, Param4) {specific loop variables}. See comments in "API.ahk"|{}
+[Loop](http://ahkscript.org/docs/commands/LoopFile.htm)|Major change|{}
 [LTrim()](http://ahkscript.org/docs/Functions.htm#Log)|Identical|String
 [LV_Add()](http://ahkscript.org/docs/commands/Trim.htm)|Identical|Number
 [LV_Delete()](http://ahkscript.org/docs/commands/ListView.htm#LV_Delete)|Identical|Number
 [LV_DeleteCol()](http://ahkscript.org/docs/commands/ListView.htm#LV_DeleteCol)|Identical|Number
 [LV_GetCount()](http://ahkscript.org/docs/commands/ListView.htm#LV_GetCount)|Identical|Number
 [LV_GetNext()](http://ahkscript.org/docs/commands/ListView.htm#LV_GetNext)|Identical|Number
-[LV_GetText()](http://ahkscript.org/docs/commands/ListView.htm#LV_GetText)|LV_GetText(RowNumber [, ColumnNumber, Advanced]) {Text, Success}. See comments in "API.ahk".|String/{}
+[LV_GetText()](http://ahkscript.org/docs/commands/ListView.htm#LV_GetText)|Major change|String/{}
 [LV_Insert()](http://ahkscript.org/docs/commands/ListView.htm#LV_Insert)|Identical|Number
 [LV_InsertCol()](http://ahkscript.org/docs/commands/ListView.htm#LV_InsertCol)|Identical|Number
 [LV_Modify()](http://ahkscript.org/docs/commands/ListView.htm#LV_Modify)|Identical|Number
 [LV_ModifyCol()](http://ahkscript.org/docs/commands/ListView.htm#LV_ModifyCol)|Identical|Number
 [LV_SetImageList()](http://ahkscript.org/docs/commands/ListView.htm#LV_SetImageList)|Identical|Number
-[Menu](http://ahkscript.org/docs/commands/Menu.htm)|Normalization|Undefined
+[Menu](http://ahkscript.org/docs/commands/Menu.htm)|Normalization|Empty
 [Mod()](http://ahkscript.org/docs/Functions.htm#Mod)|Identical|Number
-[MouseClick](http://ahkscript.org/docs/commands/MouseClick.htm)|Normalization|Undefined
-[MouseClickDrag](http://ahkscript.org/docs/commands/MouseClickDrag.htm)|Normalization|Undefined
-[MouseGetPos](http://ahkscript.org/docs/commands/MouseGetPos.htm)|MouseGetPos([ Flag ]) {X, Y, Win, Control}|{}
-[MouseMove](http://ahkscript.org/docs/commands/MouseMove.htm)|Normalization|Undefined
-[MsgBox](http://ahkscript.org/docs/commands/MsgBox.htm)|Normalization|Undefined
+[MouseClick](http://ahkscript.org/docs/commands/MouseClick.htm)|Normalization|Empty
+[MouseClickDrag](http://ahkscript.org/docs/commands/MouseClickDrag.htm)|Normalization|Empty
+[MouseGetPos](http://ahkscript.org/docs/commands/MouseGetPos.htm)|Minor change (returns Object)|{}
+[MouseMove](http://ahkscript.org/docs/commands/MouseMove.htm)|Normalization|Empty
+[MsgBox](http://ahkscript.org/docs/commands/MsgBox.htm)|Normalization|Empty
 **[NumGet()](http://ahkscript.org/docs/commands/NumGet.htm)**|**Cannot use yet**|**N/A**
 **[NumPut()](http://ahkscript.org/docs/commands/NumPut.htm)**|**Cannot use yet**|**N/A**
 **[ObjAddRef()](http://ahkscript.org/docs/commands/ObjAddRef.htm)**|**Not needed (AHK specific)**|**N/A**
@@ -356,76 +370,76 @@ AHK Keyword | JS Implementation | JS Type
 **[ObjRelease()](http://ahkscript.org/docs/commands/ObjAddRef.htm)**|**Not needed (AHK specific)**|**N/A**
 **[ObjRemove()](http://ahkscript.org/docs/objects/Object.htm)**|**Not needed (AHK specific)**|**N/A**
 **[ObjSetCapacity()](http://ahkscript.org/docs/objects/Object.htm)**|**Not needed (AHK specific)**|**N/A**
-[OnClipboardChange](http://ahkscript.org/docs/misc/Clipboard.htm#OnClipboardChange)|OnClipboardChange(Closure)|Undefined
-[OnExit](http://ahkscript.org/docs/commands/OnExit.htm)|OnExit(Closure)|Undefined
-[OnMessage()](http://ahkscript.org/docs/commands/OnMessage.htm)|OnMessage(MsgNumber [, Closure, MaxThreads])|Undefined
-[OutputDebug](http://ahkscript.org/docs/commands/OutputDebug.htm)|Normalization|Undefined
-[Pause](http://ahkscript.org/docs/commands/Pause.htm)|Normalization|Undefined
+[OnClipboardChange](http://ahkscript.org/docs/misc/Clipboard.htm#OnClipboardChange)|Minor change (built-in label becomes built-in function)|Empty
+[OnExit](http://ahkscript.org/docs/commands/OnExit.htm)|Minor change (target label becomes closure)|Empty
+[OnMessage()](http://ahkscript.org/docs/commands/OnMessage.htm)|Minor change (target function becomes closure)|Empty
+[OutputDebug](http://ahkscript.org/docs/commands/OutputDebug.htm)|Normalization|Empty
+[Pause](http://ahkscript.org/docs/commands/Pause.htm)|Normalization|Empty
 [PixelGetColor](http://ahkscript.org/docs/commands/PixelGetColor.htm)|Normalization|String
-[PixelSearch](http://ahkscript.org/docs/commands/PixelSearch.htm)|PixelSearch(X1, Y1, X2, Y2, ColorID [, Variation, Flags]) {X, Y}|{}
-[PostMessage](http://ahkscript.org/docs/commands/PostMessage.htm)|Normalization|Undefined
-[Process](http://ahkscript.org/docs/commands/Process.htm)|Normalization|Undefined
+[PixelSearch](http://ahkscript.org/docs/commands/PixelSearch.htm)|Minor change (returns Object)|{}
+[PostMessage](http://ahkscript.org/docs/commands/PostMessage.htm)|Normalization|Empty
+[Process](http://ahkscript.org/docs/commands/Process.htm)|Normalization|Empty
 [ProgramFiles](http://ahkscript.org/docs/Variables.htm#ProgramFiles)|Identical|String
-[Progress](http://ahkscript.org/docs/commands/Progress.htm)|Normalization|Undefined
-[Random](http://ahkscript.org/docs/commands/Random.htm)|Random([ Min, Max, NewSeed])|Num/Undef
-[RegDelete](http://ahkscript.org/docs/commands/RegDelete.htm)|Normalization|Undefined
-[RegExMatch()](http://ahkscript.org/docs/commands/RegExMatch.htm)|RegExMatch(Haystack, NeedleRegEx [, StartingPosition, Advanced]) {Match Object}. See comments in "API.ahk"|Number/{}
-[RegExReplace()](http://ahkscript.org/docs/commands/RegExReplace.htm)|RegExReplace(Haystack, NeedleRegEx [, Replacement, Limit, StartingPosition, Advanced]) {Text, Count}. See comments in "API.ahk"|String/{}
+[Progress](http://ahkscript.org/docs/commands/Progress.htm)|Normalization|Empty
+[Random](http://ahkscript.org/docs/commands/Random.htm)|Major change|Num/Empty
+[RegDelete](http://ahkscript.org/docs/commands/RegDelete.htm)|Normalization|Empty
+[RegExMatch()](http://ahkscript.org/docs/commands/RegExMatch.htm)|Major change|Number/{}
+[RegExReplace()](http://ahkscript.org/docs/commands/RegExReplace.htm)|Major change|String/{}
 **[RegisterCallback()](http://ahkscript.org/docs/commands/RegisterCallback.htm)**|**Cannot use yet**|**N/A**
 [RegRead](http://ahkscript.org/docs/commands/RegRead.htm)|Normalization|String
-[RegWrite](http://ahkscript.org/docs/commands/RegWrite.htm)|Normalization|Undefined
-[Reload](http://ahkscript.org/docs/commands/Reload.htm)|Normalization|Undefined
+[RegWrite](http://ahkscript.org/docs/commands/RegWrite.htm)|Normalization|Empty
+[Reload](http://ahkscript.org/docs/commands/Reload.htm)|Normalization|Empty
 [Round()](http://ahkscript.org/docs/Functions.htm#Round)|Identical|Number
 [RTrim()](http://ahkscript.org/docs/commands/Trim.htm)|Identical|String
-[Run](http://ahkscript.org/docs/commands/Run.htm)|Normalization|Undefined
-[RunAs](http://ahkscript.org/docs/commands/RunAs.htm)|Normalization|Undefined
-[RunWait](http://ahkscript.org/docs/commands/Run.htm)|RunWait(Target [, WorkingDir, Flags, OutputVarPID])|String
+[Run](http://ahkscript.org/docs/commands/Run.htm)|Normalization|Empty
+[RunAs](http://ahkscript.org/docs/commands/RunAs.htm)|Normalization|Empty
+[RunWait](http://ahkscript.org/docs/commands/Run.htm)|Major change (doesn't return exit code)|String
 [SB_SetIcon()](http://ahkscript.org/docs/commands/GuiControls.htm#SB_SetIcon)|Identical|Number
 [SB_SetParts()](http://ahkscript.org/docs/commands/GuiControls.htm#SB_SetParts)|Identical|Number
 [SB_SetText()](http://ahkscript.org/docs/commands/GuiControls.htm#SB_SetText)|Identical|Number
-[Send](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Undefined
-[SendEvent](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Undefined
-[SendInput](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Undefined
-[SendLevel](http://ahkscript.org/docs/commands/SendLevel.htm)|Normalization|Undefined
-[SendMessage](http://ahkscript.org/docs/commands/PostMessage.htm)|Normalization|Undefined
-[SendMode](http://ahkscript.org/docs/commands/SendMode.htm)|Normalization|Undefined
-[SendPlay](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Undefined
-[SendRaw](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Undefined
-[SetBatchLines](http://ahkscript.org/docs/commands/SetBatchLines.htm)|Normalization|Undefined
-[SetCapslockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Undefined
-[SetControlDelay](http://ahkscript.org/docs/commands/SetControlDelay.htm)|Normalization|Undefined
-[SetDefaultMouseSpeed](http://ahkscript.org/docs/commands/SetDefaultMouseSpeed.htm)|Normalization|Undefined
+[Send](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Empty
+[SendEvent](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Empty
+[SendInput](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Empty
+[SendLevel](http://ahkscript.org/docs/commands/SendLevel.htm)|Normalization|Empty
+[SendMessage](http://ahkscript.org/docs/commands/PostMessage.htm)|Normalization|Empty
+[SendMode](http://ahkscript.org/docs/commands/SendMode.htm)|Normalization|Empty
+[SendPlay](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Empty
+[SendRaw](http://ahkscript.org/docs/commands/Send.htm)|Normalization|Empty
+[SetBatchLines](http://ahkscript.org/docs/commands/SetBatchLines.htm)|Normalization|Empty
+[SetCapslockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Empty
+[SetControlDelay](http://ahkscript.org/docs/commands/SetControlDelay.htm)|Normalization|Empty
+[SetDefaultMouseSpeed](http://ahkscript.org/docs/commands/SetDefaultMouseSpeed.htm)|Normalization|Empty
 **[SetEnv](http://ahkscript.org/docs/commands/SetEnv.htm)**|**Not needed (AHK specific)**|**N/A**
-[SetFormat](http://ahkscript.org/docs/commands/SetFormat.htm)|Normalization|Undefined
-[SetKeyDelay](http://ahkscript.org/docs/commands/SetKeyDelay.htm)|Normalization|Undefined
-[SetMouseDelay](http://ahkscript.org/docs/commands/SetMouseDelay.htm)|Normalization|Undefined
-[SetNumLockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Undefined
-[SetRegView](http://ahkscript.org/docs/commands/SetRegView.htm)|Normalization|Undefined
-[SetScrollLockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Undefined
-[SetStoreCapslockMode](http://ahkscript.org/docs/commands/SetStoreCapslockMode.htm)|Normalization|Undefined
-[SetTimer](http://ahkscript.org/docs/commands/SetTimer.htm)|Normalization|Undefined
-[SetTitleMatchMode](http://ahkscript.org/docs/commands/SetTitleMatchMode.htm)|Normalization|Undefined
-[SetWinDelay](http://ahkscript.org/docs/commands/SetWinDelay.htm)|Normalization|Undefined
-[SetWorkingDir](http://ahkscript.org/docs/commands/SetWorkingDir.htm)|Normalization|Undefined
-[Shutdown](http://ahkscript.org/docs/commands/Shutdown.htm)|Normalization|Undefined
+[SetFormat](http://ahkscript.org/docs/commands/SetFormat.htm)|Normalization|Empty
+[SetKeyDelay](http://ahkscript.org/docs/commands/SetKeyDelay.htm)|Normalization|Empty
+[SetMouseDelay](http://ahkscript.org/docs/commands/SetMouseDelay.htm)|Normalization|Empty
+[SetNumLockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Empty
+[SetRegView](http://ahkscript.org/docs/commands/SetRegView.htm)|Normalization|Empty
+[SetScrollLockState](http://ahkscript.org/docs/commands/SetNumScrollCapsLockState.htm)|Normalization|Empty
+[SetStoreCapslockMode](http://ahkscript.org/docs/commands/SetStoreCapslockMode.htm)|Normalization|Empty
+**[SetTimer](http://ahkscript.org/docs/commands/SetTimer.htm)**|**Cannot use yet**|**Empty**
+[SetTitleMatchMode](http://ahkscript.org/docs/commands/SetTitleMatchMode.htm)|Normalization|Empty
+[SetWinDelay](http://ahkscript.org/docs/commands/SetWinDelay.htm)|Normalization|Empty
+[SetWorkingDir](http://ahkscript.org/docs/commands/SetWorkingDir.htm)|Normalization|Empty
+[Shutdown](http://ahkscript.org/docs/commands/Shutdown.htm)|Normalization|Empty
 [Sin()](http://ahkscript.org/docs/Functions.htm#Sin)|Identical|Number
-[Sleep](http://ahkscript.org/docs/commands/Sleep.htm)|Normalization|Undefined
-[Sort](http://ahkscript.org/docs/commands/Sort.htm)|Sort(VarName [, Options])|String
-[SoundBeep](http://ahkscript.org/docs/commands/SoundBeep.htm)|Normalization|Undefined
-[SoundGet](http://ahkscript.org/docs/commands/SoundGet.htm)|SoundGet([ ComponentType, ControlType, DeviceNumber])|Str/Num
+[Sleep](http://ahkscript.org/docs/commands/Sleep.htm)|Normalization|Empty
+[Sort](http://ahkscript.org/docs/commands/Sort.htm)|Major change|String
+[SoundBeep](http://ahkscript.org/docs/commands/SoundBeep.htm)|Normalization|Empty
+[SoundGet](http://ahkscript.org/docs/commands/SoundGet.htm)|Normalization|Str/Num
 [SoundGetWaveVolume](http://ahkscript.org/docs/commands/SoundGetWaveVolume.htm)|Normalization|Number
-[SoundPlay](http://ahkscript.org/docs/commands/SoundPlay.htm)|Normalization|Undefined
-[SoundSet](http://ahkscript.org/docs/commands/SoundSet.htm)|Normalization|Undefined
-[SoundSetWaveVolume](http://ahkscript.org/docs/commands/SoundSetWaveVolume.htm)|Normalization|Undefined
-[SplashImage](http://ahkscript.org/docs/commands/Progress.htm)|Normalization|Undefined
-[SplashTextOff](http://ahkscript.org/docs/commands/SplashTextOn.htm)|Normalization|Undefined
-[SplashTextOn](http://ahkscript.org/docs/commands/SplashTextOn.htm)|Normalization|Undefined
-[SplitPath](http://ahkscript.org/docs/commands/SplitPath.htm)|SplitPath(InputVar) {FileName, Dir, Extension, NameNoExt, Drive}|{}
+[SoundPlay](http://ahkscript.org/docs/commands/SoundPlay.htm)|Normalization|Empty
+[SoundSet](http://ahkscript.org/docs/commands/SoundSet.htm)|Normalization|Empty
+[SoundSetWaveVolume](http://ahkscript.org/docs/commands/SoundSetWaveVolume.htm)|Normalization|Empty
+[SplashImage](http://ahkscript.org/docs/commands/Progress.htm)|Normalization|Empty
+[SplashTextOff](http://ahkscript.org/docs/commands/SplashTextOn.htm)|Normalization|Empty
+[SplashTextOn](http://ahkscript.org/docs/commands/SplashTextOn.htm)|Normalization|Empty
+[SplitPath](http://ahkscript.org/docs/commands/SplitPath.htm)|Minor change (returns Object)|{}
 [Sqrt()](http://ahkscript.org/docs/Functions.htm#Sqrt)|Identical|Number
 [StatusBarGetText](http://ahkscript.org/docs/commands/StatusBarGetText.htm)|Normalization|String
-[StatusBarWait](http://ahkscript.org/docs/commands/StatusBarWait.htm)|Normalization|Undefined
+[StatusBarWait](http://ahkscript.org/docs/commands/StatusBarWait.htm)|Normalization|Empty
 [StrGet()](http://ahkscript.org/docs/Functions.htm#StrGet)|Identical|String
-[StringCaseSense](http://ahkscript.org/docs/commands/StringCaseSense.htm)|Normalization|Undefined
+[StringCaseSense](http://ahkscript.org/docs/commands/StringCaseSense.htm)|Normalization|Empty
 [StringGetPos](http://ahkscript.org/docs/commands/StringGetPos.htm)|Normalization|Number
 [StringLeft](http://ahkscript.org/docs/commands/StringLeft.htm)|Normalization|String
 [StringLen](http://ahkscript.org/docs/commands/StringLen.htm)|Normalization|String
@@ -441,13 +455,13 @@ AHK Keyword | JS Implementation | JS Type
 [StrPut()](http://ahkscript.org/docs/commands/StrPutGet.htm)|Identical|Str/Num
 [StrSplit()](http://ahkscript.org/docs/commands/StringSplit.htm)|Identical|Array
 [SubStr()](http://ahkscript.org/docs/Functions.htm#SubStr)|Identical|String
-[Suspend](http://ahkscript.org/docs/commands/Suspend.htm)|Normalization|Undefined
-[SysGet](http://ahkscript.org/docs/commands/SysGet.htm)|SysGet(Sub-command [, Param2]) {Left, Top, Right, Bottom}|Str/Num/{}
+[Suspend](http://ahkscript.org/docs/commands/Suspend.htm)|Normalization|Empty
+[SysGet](http://ahkscript.org/docs/commands/SysGet.htm)|Minor change (returns Object)|Str/Num/{}
 [Tan()](http://ahkscript.org/docs/Functions.htm#Tan)|Identical|Number
-[Thread](http://ahkscript.org/docs/commands/Thread.htm)|Normalization|Undefined
-[ToolTip](http://ahkscript.org/docs/commands/ToolTip.htm)|Normalization|Undefined
+[Thread](http://ahkscript.org/docs/commands/Thread.htm)|Normalization|Empty
+[ToolTip](http://ahkscript.org/docs/commands/ToolTip.htm)|Normalization|Empty
 [Transform](http://ahkscript.org/docs/commands/Transform.htm)|Normalization|Str/Num
-[TrayTip](http://ahkscript.org/docs/commands/TrayTip.htm)|Normalization|Undefined
+[TrayTip](http://ahkscript.org/docs/commands/TrayTip.htm)|Normalization|Empty
 [Trim()](http://ahkscript.org/docs/commands/Trim.htm)|Identical|String
 [TV_Add()](http://ahkscript.org/docs/commands/TreeView.htm#TV_Add)|Identical|Number
 [TV_Delete()](http://ahkscript.org/docs/commands/TreeView.htm#TV_Delete)|Identical|Number
@@ -458,39 +472,39 @@ AHK Keyword | JS Implementation | JS Type
 [TV_GetParent()](http://ahkscript.org/docs/commands/TreeView.htm#TV_GetParent)|Identical|Number
 [TV_GetPrev()](http://ahkscript.org/docs/commands/TreeView.htm#TV_GetPrev)|Identical|Number
 [TV_GetSelection()](http://ahkscript.org/docs/commands/TreeView.htm#TV_GetSelection)|Identical|Number
-[TV_GetText()](http://ahkscript.org/docs/commands/TreeView.htm#TV_GetText)|TV_GetText(ItemID [, Advanced])|String
+[TV_GetText()](http://ahkscript.org/docs/commands/TreeView.htm#TV_GetText)|Major change|String/{}
 [TV_Modify()](http://ahkscript.org/docs/commands/TreeView.htm#TV_Modify)|Identical|Number
 [TV_SetImageList()](http://ahkscript.org/docs/commands/TreeView.htm#TV_SetImageList)|Identical|Number
-[UrlDownloadToFile](http://ahkscript.org/docs/commands/URLDownloadToFile.htm)|Normalization|Undefined
+[UrlDownloadToFile](http://ahkscript.org/docs/commands/URLDownloadToFile.htm)|Normalization|Empty
 **[VarSetCapacity()](http://ahkscript.org/docs/commands/VarSetCapacity.htm)**|**Cannot use yet**|**N/A**
-[WinActivate](http://ahkscript.org/docs/commands/WinActivate.htm)|Normalization|Undefined
-[WinActivateBottom](http://ahkscript.org/docs/commands/WinActivateBottom.htm)|Normalization|Undefined
+[WinActivate](http://ahkscript.org/docs/commands/WinActivate.htm)|Normalization|Empty
+[WinActivateBottom](http://ahkscript.org/docs/commands/WinActivateBottom.htm)|Normalization|Empty
 [WinActive()](http://ahkscript.org/docs/commands/WinActive.htm)|Identical|String
-[WinClose](http://ahkscript.org/docs/commands/WinClose.htm)|Normalization|Undefined
+[WinClose](http://ahkscript.org/docs/commands/WinClose.htm)|Normalization|Empty
 [WinExist()](http://ahkscript.org/docs/commands/WinExist.htm)|Identical|String
-[WinGet](http://ahkscript.org/docs/commands/WinGet.htm)|Normalization|Str/Num
-[WinGetActiveStats](http://ahkscript.org/docs/commands/WinGetActiveStats.htm)|WinGetActiveStats() {X, Y, Width, Height, Title}|{}
+[WinGet](http://ahkscript.org/docs/commands/WinGet.htm)|Minor change (returns Object)|Str/Num/{}
+[WinGetActiveStats](http://ahkscript.org/docs/commands/WinGetActiveStats.htm)|Minor change (returns Object)|{}
 [WinGetActiveTitle](http://ahkscript.org/docs/commands/WinGetActiveTitle.htm)|Normalization|String
 [WinGetClass](http://ahkscript.org/docs/commands/WinGetClass.htm)|Normalization|String
-[WinGetPos](http://ahkscript.org/docs/commands/WinGetPos.htm)|WinGetPos([WinTitle, WinText, ExcludeTitle, ExcludeText]) {X, Y, Width, Height}|{}
+[WinGetPos](http://ahkscript.org/docs/commands/WinGetPos.htm)|Minor change (returns Object)|{}
 [WinGetText](http://ahkscript.org/docs/commands/WinGetText.htm)|Normalization|String
 [WinGetTitle](http://ahkscript.org/docs/commands/WinGetTitle.htm)|Normalization|String
-[WinHide](http://ahkscript.org/docs/commands/WinHide.htm)|Normalization|Undefined
-[WinKill](http://ahkscript.org/docs/commands/WinKill.htm)|Normalization|Undefined
-[WinMaximize](http://ahkscript.org/docs/commands/WinMaximize.htm)|Normalization|Undefined
-[WinMenuSelectItem](http://ahkscript.org/docs/commands/WinMenuSelectItem.htm)|Normalization|Undefined
-[WinMinimize](http://ahkscript.org/docs/commands/WinMinimize.htm)|Normalization|Undefined
-[WinMinimizeAll](http://ahkscript.org/docs/commands/WinMinimizeAll.htm)|Normalization|Undefined
-[WinMinimizeAllUndo](http://ahkscript.org/docs/commands/WinMinimizeAll.htm)|Normalization|Undefined
-[WinMove](http://ahkscript.org/docs/commands/WinMove.htm)|Normalization|Undefined
-[WinRestore](http://ahkscript.org/docs/commands/WinRestore.htm)|Normalization|Undefined
-[WinSet](http://ahkscript.org/docs/commands/WinSet.htm)|Normalization|Undefined
-[WinSetTitle](http://ahkscript.org/docs/commands/WinSetTitle.htm)|Normalization|Undefined
-[WinShow](http://ahkscript.org/docs/commands/WinShow.htm)|Normalization|Undefined
-[WinWait](http://ahkscript.org/docs/commands/WinWait.htm)|Normalization|Undefined
-[WinWaitActive](http://ahkscript.org/docs/commands/WinWaitActive.htm)|Normalization|Undefined
-[WinWaitClose](http://ahkscript.org/docs/commands/WinWaitClose.htm)|Normalization|Undefined
-[WinWaitNotActive](http://ahkscript.org/docs/commands/WinWaitActive.htm)|Normalization|Undefined
+[WinHide](http://ahkscript.org/docs/commands/WinHide.htm)|Normalization|Empty
+[WinKill](http://ahkscript.org/docs/commands/WinKill.htm)|Normalization|Empty
+[WinMaximize](http://ahkscript.org/docs/commands/WinMaximize.htm)|Normalization|Empty
+[WinMenuSelectItem](http://ahkscript.org/docs/commands/WinMenuSelectItem.htm)|Normalization|Empty
+[WinMinimize](http://ahkscript.org/docs/commands/WinMinimize.htm)|Normalization|Empty
+[WinMinimizeAll](http://ahkscript.org/docs/commands/WinMinimizeAll.htm)|Normalization|Empty
+[WinMinimizeAllUndo](http://ahkscript.org/docs/commands/WinMinimizeAll.htm)|Normalization|Empty
+[WinMove](http://ahkscript.org/docs/commands/WinMove.htm)|Normalization|Empty
+[WinRestore](http://ahkscript.org/docs/commands/WinRestore.htm)|Normalization|Empty
+[WinSet](http://ahkscript.org/docs/commands/WinSet.htm)|Normalization|Empty
+[WinSetTitle](http://ahkscript.org/docs/commands/WinSetTitle.htm)|Normalization|Empty
+[WinShow](http://ahkscript.org/docs/commands/WinShow.htm)|Normalization|Empty
+[WinWait](http://ahkscript.org/docs/commands/WinWait.htm)|Normalization|Empty
+[WinWaitActive](http://ahkscript.org/docs/commands/WinWaitActive.htm)|Normalization|Empty
+[WinWaitClose](http://ahkscript.org/docs/commands/WinWaitClose.htm)|Normalization|Empty
+[WinWaitNotActive](http://ahkscript.org/docs/commands/WinWaitActive.htm)|Normalization|Empty
 **[#ClipboardTimeout](http://ahkscript.org/docs/commands/_ClipboardTimeout.htm)**|**Cannot use directives**|**N/A**
 **[#CommentFlag](http://ahkscript.org/docs/commands/_CommentFlag.htm)**|**Not needed (AHK specific)**|**N/A**
 **[#ErrorStdOut](http://ahkscript.org/docs/commands/_ErrorStdOut.htm)**|**Not needed (AHK specific)**|**N/A**
@@ -502,7 +516,7 @@ AHK Keyword | JS Implementation | JS Type
 **[#IfTimeout](http://ahkscript.org/docs/commands/_IfTimeout.htm)**|**Cannot use directives. Try "Hotkey()"+"if" instead.**|**N/A**
 **[#IfWinActive](http://ahkscript.org/docs/commands/_IfWinActive.htm)**|**Cannot use directives. Try "Hotkey()"+"if" instead.**|**N/A**
 **[#IfWinExist](http://ahkscript.org/docs/commands/_IfWinActive.htm)**|**Cannot use directives. Try "Hotkey()"+"if" instead.**|**N/A**
-[#Include](http://ahkscript.org/docs/commands/_Include.htm)|Include(JSFilePath)|Undefined
+**[#Include](http://ahkscript.org/docs/commands/_Include.htm)**|**Cannot use yet.**|**N/A**
 **[#InputLevel](http://ahkscript.org/docs/commands/_InputLevel.htm)**|**Cannot use directives**|**N/A**
 **[#InstallKeybdHook](http://ahkscript.org/docs/commands/_InstallKeybdHook.htm)**|**Cannot use directives**|**N/A**
 **[#InstallMouseHook](http://ahkscript.org/docs/commands/_InstallMouseHook.htm)**|**Cannot use directives**|**N/A**
@@ -521,20 +535,14 @@ AHK Keyword | JS Implementation | JS Type
 **[#UseHook](http://ahkscript.org/docs/commands/_UseHook.htm)**|**Cannot use directives. Try "Hotkey($)" instead.**|**N/A**
 **[#Warn](http://ahkscript.org/docs/commands/_Warn.htm)**|**Not needed (AHK specific)**|**N/A**
 **[#WinActivateForce](http://ahkscript.org/docs/commands/_WinActivateForce.htm)**|**Cannot use directives**|**N/A**
+~|Addition: "Require()" (a globally scoped #Include)|Empty
+
 
 ## TODO
 - Test every keyword
 - Accept/Provide URI paths in all transactions (not DOS-style paths)
 - Allow "Include" to use online URL
 - Implement "IncludeAgain"
-- Implement all built-in labels (GuiSize, GuiClose, etc)
 - Implement "DateAdd" and "DateDiff"
-- Find a workaround for the JS "onload" event
+- Implement some of the Directives (especially "#SingleInstance")
 - Maybe implement a console (Firebug lite has some issues)
-- Clarify how to handle the Directives
-
-
-## About
-- Author: Aurelain (aurelain@gmail.com)
-- License: [WTFPL](http://www.wtfpl.net/)
-- Tested on AutoHotkey v1.1.15.04
