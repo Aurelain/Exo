@@ -44,7 +44,7 @@ ExitApp();
 ## About
 - Authors: **Aurelain** (aurelain@gmail.com), with major contributions from **Lexikos**
 - License: [WTFPL](http://www.wtfpl.net/)
-- Version: 0.95
+- Version: 0.96
 - Minimum requirements:
   - **AutoHotkey v1.1.17.01**
   - Internet Explorer 8
@@ -281,7 +281,7 @@ AHK Keyword | JS Implementation | JS Type
 **[FileInstall](http://ahkscript.org/docs/commands/FileInstall.htm)**|**Cannot use compile-time features.**|**N/A**
 [FileMove](http://ahkscript.org/docs/commands/FileMove.htm)|Normalization|Empty
 [FileMoveDir](http://ahkscript.org/docs/commands/FileMoveDir.htm)|Normalization|Empty
-**[FileOpen()](http://ahkscript.org/docs/commands/FileOpen.htm)**|**Cannot use yet**|**N/A**
+[FileOpen()](http://ahkscript.org/docs/commands/FileOpen.htm)|Minor change (RawRead() multiple output)|File
 [FileRead](http://ahkscript.org/docs/commands/FileRead.htm)|Normalization|String
 [FileReadLine](http://ahkscript.org/docs/commands/FileReadLine.htm)|Normalization|String
 [FileRecycle](http://ahkscript.org/docs/commands/FileRecycle.htm)|Normalization|Empty

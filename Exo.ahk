@@ -52,7 +52,7 @@ ControlGet ControlGetFocus ControlGetPos ControlGetText ControlMove ControlSend 
 ControlSetText CoordMode Cos Critical DetectHiddenText DetectHiddenWindows DllCall Drive DriveGet
 DriveSpaceFree EnvGet EnvSet EnvUpdate ExitApp Exp FileAppend FileCopy FileCopyDir FileCreateDir
 FileCreateShortcut FileDelete FileEncoding FileExist FileGetAttrib FileGetShortcut FileGetSize
-FileGetTime FileGetVersion FileMove FileMoveDir FileRead FileReadLine FileRecycle FileRecycleEmpty
+FileGetTime FileGetVersion FileMove FileMoveDir FileOpen FileRead FileReadLine FileRecycle FileRecycleEmpty
 FileRemoveDir FileSelectFile FileSelectFolder FileSetAttrib FileSetTime Floor FormatTime GetKeyName
 GetKeySC GetKeyState GetKeyVK GroupActivate GroupAdd GroupClose GroupDeactivate Gui GuiControl
 GuiControlGet Hotkey IL_Add IL_Create IL_Destroy ImageSearch IniDelete IniRead IniWrite Input
@@ -419,5 +419,5 @@ OnMessageClosure(wParam, lParam, msg, hwnd){
 ;###################################################################################################
 ;############################################   A P I   ############################################
 ;###################################################################################################
-
+#Include %A_ScriptDir%\lib\FileObject.ahk
 #Include %A_ScriptDir%\lib\API.ahk

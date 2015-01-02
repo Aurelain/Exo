@@ -376,6 +376,24 @@ _FileMoveDir(Source,Dest,Flag=""){
 
 
 /**
+ * Implementation: Minor change.
+ * The implementation of "FileOpen" is in fact identical to the one in AHK (thanks to Coco).
+ * The only difference is in the returned file object, whose "RawRead()" cannot output 2 variables.
+ * In AHK, "RawRead()" has the definition "RawRead(ByRef VarOrAddress, bytes):<Number>".
+ * In JS, "RawRead()" has the definition "RawRead(bytes, Advanced=0)", with two modes:
+ * 		1) the default mode (Advanced=0) is to return the retrieved data. Note that this behavior
+ *          differs from the one in AHK, where the return value represents the number of bytes
+ *          that were read.
+ *		2) the advanced mode (Advanced!=0) returns an object with 2 properties:
+ *           Count: The number of bytes that were read.
+ *           Data: The data retrieved from the file.
+ */
+_FileOpen(fspec, flags, encoding:="CP0"){
+	return new FileObject(fspec, flags, encoding)
+}
+
+
+/**
  * Implementation: Normalization.
  */
 _FileRead(Filename){
