@@ -1,4 +1,5 @@
-﻿alert(A_Now);
+﻿Hotkey('ESC', function(){ExitApp()});
+alert(A_Now);
 FileAppend('Hello, World!', 'hello.txt')
 var list = Loop('*.txt');
 for (var i = 0; i < list.length; i++) {

@@ -16,6 +16,7 @@ for key, val in params {
 if (!main) {
 	main := "demo.js"
 }
+global mainPath := ""
 Loop, %main%
 {
 	mainPath := A_LoopFileLongPath
@@ -94,7 +95,8 @@ HKEY_CURRENT_CONFIG,HKCC
 )
 
 BUILTIN_LABELS := "GuiClose GuiContextMenu GuiDropFiles GuiEscape GuiSize OnClipboardChange"
-
+WIDTH := 800
+HEIGHT := 600
 
 ; __________________________________________________________________________________________________
 ; Global variables
@@ -106,6 +108,7 @@ global builtinLabels := enum(BUILTIN_LABELS)
 global closures := {}	; a map that links a string identifier to a js native closure. Used by "trigger()"
 global JS ; a JavaScript helper object. Used extensively by the API functions.
 global window ; a shortcut to wb.document.parentWindow. Used by "_Require()".
+global mainDir
 
 
 ; __________________________________________________________________________________________________
@@ -127,7 +130,7 @@ OnExit, LabelOnExit
 ; Further reading:
 ; 	● http://ahkscript.org/boards/viewtopic.php?t=5714&p=33477#p33477
 ; 	● http://ahkscript.org/boards/viewtopic.php?f=14&t=5778
-Gui Add, ActiveX, w800 h600 vwb, Shell.Explorer
+Gui, Add, ActiveX, w%WIDTH% h%HEIGHT% x0 y0 vwb, Shell.Explorer
 wb.Navigate("about:<!DOCTYPE html><meta http-equiv='X-UA-Compatible' content='IE=edge'>")
 while wb.readyState < 4
 	Sleep 10
@@ -250,7 +253,9 @@ for key, val in builtinLabels {
 ; __________________________________________________________________________________________________
 ; Finish the Auto-execute Section
 trigger("OnClipboardChange")
-Gui Show
+OnMessage(0x100, "WB_onKey", 2) ; support for key down
+OnMessage(0x101, "WB_onKey", 2) ; support for key up
+Gui, Show, w%WIDTH% h%HEIGHT%
 return
 
 
@@ -420,4 +425,5 @@ OnMessageClosure(wParam, lParam, msg, hwnd){
 ;############################################   A P I   ############################################
 ;###################################################################################################
 #Include %A_ScriptDir%\lib\FileObject.ahk
+#Include %A_ScriptDir%\lib\WB_onKey.ahk
 #Include %A_ScriptDir%\lib\API.ahk

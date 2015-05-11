@@ -20,6 +20,31 @@ _A_Args(){
 
 
 /**
+ * 
+ */
+_A_ScriptDir(){
+	return %mainDir% 
+}
+
+
+/**
+ * 
+ */
+_A_ScriptFullPath(){
+	return %mainPath% 
+}
+
+
+/**
+ * 
+ */
+_A_ScriptName(){
+	SplitPath, mainPath, mainFilename
+	return %mainFilename%
+}
+
+
+/**
  * Implementation: Normalization.
  */
 _BlockInput(Mode){
