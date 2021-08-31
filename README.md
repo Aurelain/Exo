@@ -4,6 +4,14 @@ Imagine the ecosystem of JavaScript libraries (jQuery, CreateJS, etc.) in the ha
 
 *Exo* makes this happen!
 
+## Archived
+*Exo* has been archived because it is somewhat outdated and is no longer actively maintained.
+Here are other paths to follow for OS automation through JS:
+- [AutoHotkey-jk](https://github.com/Lexikos/AutoHotkey-jk)
+- [Electron](https://github.com/electron/electron)
+- [RobotJS](https://github.com/octalmage/robotjs)
+- [LaunchMenu](https://github.com/LaunchMenu/LaunchMenu)
+
 ## Description
 *Exo* exposes most built-in commands/functions/variables of AHK to JavaScript, allowing you to practically write AHK inside JS (with JS syntax).
 
